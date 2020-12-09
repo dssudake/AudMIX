@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { BsCloudUpload, BsCloudDownload } from 'react-icons/bs';
 import { SiAudiomack } from 'react-icons/si';
@@ -62,9 +63,11 @@ export default function Home() {
       </Row>
 
       <Row className="justify-content-center">
-        <Button size="lg" variant="outline-primary">
-          Get Started <FiFastForward />
-        </Button>
+        <Link to="/upload">
+          <Button size="lg" variant="outline-primary">
+            Get Started <FiFastForward />
+          </Button>
+        </Link>
       </Row>
     </Container>
   );
