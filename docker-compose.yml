@@ -11,3 +11,18 @@ services:
       - 8000:8000
     env_file:
       - ./.env.dev
+
+  frontend:
+    container_name: audmix_frontend
+    build: ./frontend
+    command: npm start
+    volumes:
+      - ./frontend/:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    tty: true
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=True
+    stdin_open: true
