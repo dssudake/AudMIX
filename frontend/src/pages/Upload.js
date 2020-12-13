@@ -12,7 +12,7 @@ export default function Upload() {
     document.title = 'Upload | AudMIX';
   });
 
-  const [fileName, setfileName] = useState('');
+  const [fileName, setfileName] = useState('No file selected');
 
   const handelFileBrowse = () => {
     const fileSelector = document.createElement('input');
@@ -42,7 +42,7 @@ export default function Upload() {
             Browse
           </Button>
 
-          <Button size="lg" variant="outline-primary" disabled>
+          <Button size="lg" variant="outline-primary">
             <BsUpload /> <br /> Upload
           </Button>
         </ButtonGroup>
