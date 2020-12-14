@@ -42,11 +42,7 @@ export default function Upload() {
       .post('http://127.0.0.1:8000/api/upload/', uploadData, {})
       .then((res) => console.log(res))
       .catch((error) => console.log(error));
-    /*fetch('http://127.0.0.1:8000/api/upload/', {
-      method: 'POST',
-      body: uploadData,
-    });*/
-    //.then( res => console.log(res))
+    alert('File Uploaded');
   };
   return (
     <Container fluid="xl" style={{ paddingTop: '20vh' }}>
