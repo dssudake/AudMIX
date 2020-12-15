@@ -5,7 +5,6 @@ from .models import upload
 
 class MediaViewSet(viewsets.ModelViewSet):
     queryset=upload.objects.all()
-    print(queryset)
     serializer_class=uploadSerializer
 
 def post(self,request,*args,**kwargs):

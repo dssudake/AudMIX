@@ -13,22 +13,21 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+^5i7)$1&+$*0jec95!*e3ii=js45gbr%4d&muanq0^7@wbu&5'
+SECRET_KEY = os.environ.get("SECRET_KEY", default='+^5i7)$1&+$*0jec95!*e3ii=js45gbr%4d&muanq0^7@wbu&5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.environ.get("DEBUG", default=1))
 
-ALLOWED_HOSTS = []
-
+# 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
+# For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default='localhost 127.0.0.1').split(" ")
 
 # Application definition
 
@@ -131,5 +130,3 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 MEDIA_URL='/media/'
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-ALLOWED_HOSTS = ['http://localhost:3000/upload','http://localhost:3000','127.0.0.1',]
