@@ -4,11 +4,11 @@ from .serializers import uploadSerializer
 from .models import upload
 
 class MediaViewSet(viewsets.ModelViewSet):
-    queryset=upload.objects.all()
-    serializer_class=uploadSerializer
+    queryset = upload.objects.all()
+    serializer_class = uploadSerializer
 
-def post(self,request,*args,**kwargs):
-    File=request.data['File']
-    Name=request.data['Name']
-    upload.objects.create(name=name,File=File)
-    return HttpResponse({'message': 'File uploaded'},status=200)
+    def post(self,request,*args,**kwargs):
+        File=request.data['File']
+        Name=request.data['Name']
+        upload.objects.create(Name=Name,File=File)
+        return HttpResponse({'message': 'File uploaded'},status=200)

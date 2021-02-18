@@ -5,9 +5,9 @@ import { BsUpload } from 'react-icons/bs';
 import { BiArrowBack } from 'react-icons/bi';
 import { CgBrowse } from 'react-icons/cg';
 import { AiOutlineClose } from 'react-icons/ai';
-import axios from 'axios';
 
 import logo from '../assets/img/logo.png';
+import api from '../utils/api';
 
 export default function Upload() {
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Upload() {
   function handleFileBrowse() {
     const fileSelector = document.createElement('input');
     fileSelector.setAttribute('type', 'file');
-    fileSelector.setAttribute('accept', 'audio/*');
+    fileSelector.setAttribute('accept', 'audio/*,video/*');
     fileSelector.click();
     fileSelector.addEventListener('change', function (event) {
       var file = event.target.files[0];
@@ -50,8 +50,8 @@ export default function Upload() {
     const uploadData = new FormData();
     uploadData.append('Name', fileName);
     uploadData.append('File', File, File.name);
-    axios
-      .post('http://127.0.0.1:8000/api/upload/', uploadData, {})
+    api
+      .post('upload/', uploadData, {})
       .then((res) => console.log(res))
       .catch((error) => console.log(error));
     alert('File Uploaded');
