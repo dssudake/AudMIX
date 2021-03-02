@@ -1,8 +1,7 @@
 from django.db import models
-
-def upload_path(instance,filename):
-    return '/'.join(['user audio',str(instance.Name),filename])
+import uuid
 
 class upload(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     Name=models.CharField(max_length=200)
-    File=models.FileField(upload_to=upload_path)
+    File=models.FileField(upload_to='user_media/%Y/%m/%d')
