@@ -58,7 +58,7 @@ export default function Upload() {
   const handelUpload = () => {
     var fileName = namer(File.name);
     const uploadData = new FormData();
-    uploadData.append('Name', fileName);
+    uploadData.append('Name', File.name);
     uploadData.append('File', File, fileName);
     api
       .post('upload/', uploadData, {})
