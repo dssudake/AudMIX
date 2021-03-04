@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Upload from './pages/Upload';
 import List from './pages/List';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route exact path="/" component={Home} />
         <Route exact path="/list" component={List} />
         <Route exact path="/upload" component={Upload} />
+        <Route component={NotFound} />
       </Switch>
     </div>
   );
