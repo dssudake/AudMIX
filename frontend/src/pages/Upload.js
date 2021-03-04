@@ -20,7 +20,7 @@ export default function Upload() {
   const [id, setId] = useState('');
   useEffect(() => {
     if (isUploaded) {
-      counter > 0 ? setTimeout(() => setCounter(counter - 1), 1000) : history.push('/edit/' + id);
+      counter > 0 ? setTimeout(() => setCounter(counter - 1), 1000) : history.push('/editor/' + id);
     }
   }, [counter]);
 
