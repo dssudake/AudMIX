@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Upload from './pages/Upload';
+import Editor from './pages/Editor';
 import List from './pages/List';
 import NotFound from './pages/NotFound';
 
@@ -13,6 +14,7 @@ function App() {
         <Route exact path="/" component={Home} />
         <Route exact path="/list" component={List} />
         <Route exact path="/upload" component={Upload} />
+        <Route exact path="/editor/:id" component={Editor} />
         <Route component={NotFound} />
       </Switch>
     </div>
