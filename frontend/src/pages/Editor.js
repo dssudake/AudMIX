@@ -22,15 +22,19 @@ export default function Editor() {
     api
       .get('upload/' + id, config)
       .then((res) => {
-        console.log(res.data);
+        setAudData(res.data);
       })
       .catch((error) => console.log(error));
   };
 
   return (
-    <Container fluid="xl" className="pt-4">
-      <Row className="justify-content-left">
+    <Container fluid className="pt-4 px-5">
+      <Row className="justify-content-center">
         <img src={logo} width="200" />
+      </Row>
+
+      <Row className="justify-content-center text-secondary mt-3 mb-5 h3">
+        ~ Process Your Audio on Cloud ~
       </Row>
     </Container>
   );
