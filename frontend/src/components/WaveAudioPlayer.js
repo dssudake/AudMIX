@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Button, Card, Form } from 'react-bootstrap';
+import { Row, Col, Button, Card, Form, Accordion } from 'react-bootstrap';
 
 import WaveSurfer from 'wavesurfer.js';
 import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.min.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
 
 import { BsPlayFill, BsPauseFill, BsFillVolumeUpFill, BsFillVolumeMuteFill } from 'react-icons/bs';
-import { AiOutlineSound } from 'react-icons/ai';
+import { AiOutlineZoomIn, AiOutlineZoomOut, AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
+import { ImVolumeDecrease, ImVolumeIncrease } from 'react-icons/im';
 
 const formWaveSurferOptions = (ref, reftl) => ({
   container: ref,
@@ -56,6 +57,9 @@ export default function WaveAudioPlayer({ url, name }) {
   const [playing, setPlay] = useState(false);
   const [isMute, setIsMute] = useState(false);
   const [volume, setVolume] = useState(0.5);
+  const [zoom, setZoom] = useState(30);
+  const [playBack, setPlayBack] = useState(1);
+  const [visible, setVisible] = useState(false);
 
   // create new WaveSurfer instance
   // On component mount and when url changes
@@ -110,6 +114,16 @@ export default function WaveAudioPlayer({ url, name }) {
     }
   };
 
+  const handelZoom = (e) => {
+    wavesurfer.current.zoom(Number(e.target.value));
+    setZoom(e.target.value);
+  };
+
+  const handelPlayBack = (e) => {
+    wavesurfer.current.setPlaybackRate(Number(e.target.value));
+    setPlayBack(e.target.value);
+  };
+
   return (
     <div
       style={{
@@ -121,45 +135,116 @@ export default function WaveAudioPlayer({ url, name }) {
       <Card ref={waveformRef} className="rounded-top bg-dark border-0" />
       <Card ref={timelineRef} className="rounded-top bg-dark border-0" />
 
-      <Card className="rounded-bottom bg-dark border-0">
-        <Card.Body>
-          <Row className="justify-content-between">
-            <Col>
-              <Button
-                className="rounded-circle pb-2 mr-3"
-                style={btnShadow}
-                onClick={handlePlayPause}
-              >
-                {!playing ? <BsPlayFill /> : <BsPauseFill />}
-              </Button>
-              <Button className="rounded-circle pb-2" style={btnShadow} onClick={handleToggleMute}>
-                {isMute ? <BsFillVolumeMuteFill /> : <BsFillVolumeUpFill />}
-              </Button>
-            </Col>
+      <Card className="bg-dark border-0 py-2">
+        <Accordion>
+          <Card className="bg-dark border-0">
+            <Card.Header>
+              <Row>
+                <Col>
+                  <Button
+                    className="rounded-circle pb-2 mr-3"
+                    style={btnShadow}
+                    onClick={handlePlayPause}
+                  >
+                    {!playing ? <BsPlayFill /> : <BsPauseFill />}
+                  </Button>
+                  <Button
+                    className="rounded-circle pb-2"
+                    style={btnShadow}
+                    onClick={handleToggleMute}
+                  >
+                    {isMute ? <BsFillVolumeMuteFill /> : <BsFillVolumeUpFill />}
+                  </Button>
+                </Col>
 
-            <Col>
-              <Form inline>
-                <Form.Group className="text-primary ml-auto mt-2 h5">
-                  <Form.Label>
-                    <AiOutlineSound /> &ensp;
-                  </Form.Label>
-                  <Form.Control
-                    type="range"
-                    style={{ width: '130px' }}
-                    min="0.01" // waveSurfer recognize value of `0` same as `1` so we need to set some zero-ish value for silence
-                    max="1"
-                    step=".025"
-                    onChange={onVolumeChange}
-                    defaultValue={volume}
-                    className="text-dark"
-                    disabled={isMute}
-                  />
-                </Form.Group>
-              </Form>
-            </Col>
-          </Row>
-          <Card.Text className="text-center text-muted">{name}</Card.Text>
-        </Card.Body>
+                <Accordion.Toggle
+                  as={Button}
+                  variant="link"
+                  className="rounded text-primary"
+                  eventKey="0"
+                  onClick={() => setVisible(!visible)}
+                >
+                  <span className="text-primary mr-2">{name}</span>
+                  {visible ? <AiOutlineMinus /> : <AiOutlinePlus />}
+                </Accordion.Toggle>
+              </Row>
+            </Card.Header>
+
+            <Accordion.Collapse eventKey="0">
+              <Card.Body className="text-muted">
+                <Row className="justify-content-between">
+                  <Col>Volume</Col>
+                  <Col>
+                    <Form inline>
+                      <Form.Group className="ml-auto">
+                        <span className="mr-2">
+                          <ImVolumeDecrease />
+                        </span>
+                        <Form.Control
+                          type="range"
+                          style={{ width: '200px' }}
+                          min="0.01" // waveSurfer recognize value of `0` same as `1` so we need to set some zero-ish value for silence
+                          max="1"
+                          step=".025"
+                          onChange={onVolumeChange}
+                          defaultValue={volume}
+                          disabled={isMute}
+                        />
+                        <span className="ml-2">
+                          <ImVolumeIncrease />
+                        </span>
+                      </Form.Group>
+                    </Form>
+                  </Col>
+                </Row>
+                <Row className="justify-content-between mt-3">
+                  <Col>Zoom : {zoom}</Col>
+                  <Col>
+                    <Form inline>
+                      <Form.Group className="ml-auto">
+                        <span className="mr-2">
+                          <AiOutlineZoomOut />
+                        </span>
+                        <Form.Control
+                          type="range"
+                          min="0"
+                          max="200"
+                          step="5"
+                          value={zoom}
+                          onChange={handelZoom}
+                          style={{ width: '200px' }}
+                        />
+                        <span className="ml-2">
+                          <AiOutlineZoomIn />
+                        </span>
+                      </Form.Group>
+                    </Form>
+                  </Col>
+                </Row>
+                <Row className="justify-content-between mt-3">
+                  <Col>Play Back Rate : {playBack}x</Col>
+                  <Col>
+                    <Form inline>
+                      <Form.Group className="ml-auto">
+                        <span className="mr-2">0.5x</span>
+                        <Form.Control
+                          type="range"
+                          min="0.5"
+                          max="2"
+                          step="0.5"
+                          value={playBack}
+                          onChange={handelPlayBack}
+                          style={{ width: '200px' }}
+                        />
+                        <span className="ml-2">2x</span>
+                      </Form.Group>
+                    </Form>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Accordion.Collapse>
+          </Card>
+        </Accordion>
       </Card>
     </div>
   );
