@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 import logo from '../assets/img/logo.png';
 import api from '../utils/api';
+import WaveAudioPlayer from '../components/WaveAudioPlayer';
 
 export default function Editor() {
   const { id } = useParams();
+  const [audData, setAudData] = useState(null);
 
   useEffect(() => {
     document.title = 'Editor  | AudMIX - Process Your Audio on Cloud';
@@ -28,13 +30,35 @@ export default function Editor() {
   };
 
   return (
-    <Container fluid className="pt-4 px-5">
+    <Container fluid className="pt-4 pb-5 px-5">
       <Row className="justify-content-center">
         <img src={logo} width="200" />
       </Row>
 
-      <Row className="justify-content-center text-secondary mt-3 mb-5 h3">
+      <Row className="justify-content-center text-secondary mt-3 h3">
         ~ Process Your Audio on Cloud ~
+      </Row>
+
+      <Row className="justify-content" style={{ marginTop: '60px' }}>
+        <Col className="pr-5">
+          <Row>
+            <Col xs={12}>
+              {audData && <WaveAudioPlayer url={audData.File} name={'Original Audio'} />}
+            </Col>
+            <Col xs={12} className="mt-5">
+              {audData && <WaveAudioPlayer url={audData.File} name={'Processed Audio'} />}
+            </Col>
+          </Row>
+        </Col>
+
+        <Col
+          style={{
+            borderRadius: '10px',
+            boxShadow: '11px 11px 17px #060606, -11px -11px 17px #161616',
+            padding: '15px 15px 15px 15px',
+          }}
+          md={4}
+        ></Col>
       </Row>
     </Container>
   );
