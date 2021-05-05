@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
-    'file_upload'
+    'file_upload',
+    'processAPI',
 
 ]
 
@@ -114,7 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -130,6 +132,9 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+AUDIO_PROCESSING_ROOT = 'user_audio'
+AUDIO_PROCESSING_AUDIO_FILE_NAME = 'audio'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
