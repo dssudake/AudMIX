@@ -9,7 +9,7 @@ class AudioFileAdmin(admin.ModelAdmin):
     search_fields = ('id', 'name',)
     fields = ('id', 'modified_at', 'created_at',
               'name', 'audio', 'processed_audio')
-    readonly_fields = ('id', 'created_at', 'modified_at',)
+    readonly_fields = ('id', 'created_at', 'modified_at', 'processed_audio',)
 
 
 # Register your models here.

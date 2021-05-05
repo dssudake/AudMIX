@@ -1,8 +1,10 @@
 import os
 import uuid
+import shutil
 
 from django.db import models
 from django.conf import settings
+from django.dispatch import receiver
 
 
 def create_with_pk(self):
@@ -43,3 +45,16 @@ class AudioFile(models.Model):
 
     class Meta:
         ordering = ('-created_at', '-modified_at')
+
+
+@receiver(models.signals.post_delete, sender=AudioFile)
+def auto_delete_dir_on_delete(sender, instance, **kwargs):
+    """
+    Auto deletes audio file from filesystem
+    when corresponding `AudioFile` object is deleted.
+    """
+    if instance.audio:
+        if os.path.isfile(instance.audio.path):
+            folder_path = os.path.join(
+                settings.MEDIA_ROOT, settings.AUDIO_PROCESSING_ROOT, str(instance.id))
+            shutil.rmtree(folder_path, ignore_errors=True)
