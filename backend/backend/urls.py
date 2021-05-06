@@ -26,9 +26,18 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('api/', include('file_upload.urls')),
+
+    # Audio Processing API Routes
+    path('api/', include('processAPI.urls')),
+
+    # Swagger API Documentation
     path('api/docs/', schema_view.with_ui('swagger',
          cache_timeout=0), name='schema-swagger-ui'),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# to load static/media files in development environment
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
