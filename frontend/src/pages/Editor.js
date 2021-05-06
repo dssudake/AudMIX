@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 
 import logo from '../assets/img/logo.png';
@@ -22,9 +22,9 @@ export default function Editor() {
       },
     };
     api
-      .get('upload/' + id, config)
+      .get('process_audio/' + id, config)
       .then((res) => {
-        setAudData(res.data);
+        res.status === 200 && setAudData(res.data);
       })
       .catch((error) => console.log(error));
   };
@@ -39,26 +39,41 @@ export default function Editor() {
         ~ Process Your Audio on Cloud ~
       </Row>
 
-      <Row className="justify-content" style={{ marginTop: '60px' }}>
-        <Col className="pr-5">
-          <Row>
-            <Col xs={12}>
-              {audData && <WaveAudioPlayer url={audData.File} name={'Original Audio'} />}
+      <Row className="justify-content-center" style={{ marginTop: '60px' }}>
+        {!audData ? (
+          <div className="text-primary">
+            Audio file not available, check available&nbsp;
+            <Link to="/list">
+              <u>list</u>
+            </Link>
+            {' or '}
+            <Link to="/upload">
+              <u>upload now</u>
+            </Link>
+          </div>
+        ) : (
+          <>
+            <Col className="pr-5">
+              <Row>
+                <Col xs={12}>
+                  {audData && <WaveAudioPlayer url={audData.audio} name={'Original Audio'} />}
+                </Col>
+                <Col xs={12} className="mt-5">
+                  {audData && <WaveAudioPlayer url={audData.audio} name={'Processed Audio'} />}
+                </Col>
+              </Row>
             </Col>
-            <Col xs={12} className="mt-5">
-              {audData && <WaveAudioPlayer url={audData.File} name={'Processed Audio'} />}
-            </Col>
-          </Row>
-        </Col>
 
-        <Col
-          style={{
-            borderRadius: '10px',
-            boxShadow: '11px 11px 17px #060606, -11px -11px 17px #161616',
-            padding: '15px 15px 15px 15px',
-          }}
-          md={4}
-        ></Col>
+            <Col
+              style={{
+                borderRadius: '10px',
+                boxShadow: '11px 11px 17px #060606, -11px -11px 17px #161616',
+                padding: '15px 15px 15px 15px',
+              }}
+              md={4}
+            ></Col>
+          </>
+        )}
       </Row>
     </Container>
   );
