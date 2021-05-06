@@ -21,7 +21,6 @@ export default function List() {
     api
       .get('upload/', config)
       .then((res) => {
-        console.log(res);
         setAudData(res.data);
       })
       .catch((error) => console.log(error));
@@ -56,7 +55,7 @@ export default function List() {
             {audData.map((item) => (
               <li key={item.id}>
                 <Link target="_blank" to={'/editor/' + item.id}>
-                  {item.Name}
+                  {item.name}
                 </Link>
               </li>
             ))}

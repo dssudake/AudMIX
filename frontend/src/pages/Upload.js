@@ -28,9 +28,9 @@ export default function Upload() {
   const [File, setfile] = useState(null);
 
   const namer = (name) => {
-    var len = name.length;
     var d = new Date();
-    var ext = name.slice(0, len - 4) + '_' + d.getTime();
+    var ext =
+      name + '_' + d.toLocaleDateString().replaceAll('/', '-') + '_' + d.toLocaleTimeString();
     return ext;
   };
 
@@ -58,8 +58,8 @@ export default function Upload() {
   const handelUpload = () => {
     var fileName = namer(File.name);
     const uploadData = new FormData();
-    uploadData.append('Name', File.name);
-    uploadData.append('File', File, fileName);
+    uploadData.append('name', fileName);
+    uploadData.append('audio', File);
     api
       .post('upload/', uploadData, {})
       .then((res) => {

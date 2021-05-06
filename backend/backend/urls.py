@@ -27,7 +27,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/', include('file_upload.urls')),
+    # path('api/', include('file_upload.urls')),
 
     # Audio Processing API Routes
     path('api/', include('processAPI.urls')),
