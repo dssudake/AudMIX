@@ -1,6 +1,14 @@
 # pull official base image
 FROM python:3.8.3-alpine
 
+# install ffmpeg with linux static build
+ARG FFMPEGV=4.2.2
+RUN wget -q https://www.johnvansickle.com/ffmpeg/old-releases/ffmpeg-${FFMPEGV}-amd64-static.tar.xz \
+    && tar xJf ffmpeg-${FFMPEGV}-amd64-static.tar.xz \
+    && mv ffmpeg-${FFMPEGV}-amd64-static/ffmpeg /usr/local/bin/ \
+    && rm -rf ffmpeg-${FFMPEGV}-amd64-static \
+    && rm ffmpeg-${FFMPEGV}-amd64-static.tar.xz
+
 # set work directory
 WORKDIR /usr/src/app
 
