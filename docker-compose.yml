@@ -1,17 +1,48 @@
 version: "3.7"
 
 services:
+  # Django backend app
   django:
     container_name: audmix_django
     build: ./backend
     command: python manage.py runserver 0.0.0.0:8000
+    links:
+      - "redis:redis_cache"
     volumes:
       - ./backend/:/usr/src/app/
     ports:
       - 8000:8000
     env_file:
       - ./.env.dev
+    depends_on:
+      - redis
 
+  #  Distributed Task Queue to achieve asynchronous behaviour
+  celery:
+    container_name: audmix_celery
+    build: ./backend
+    command: celery -A backend worker -l INFO
+    links:
+      - "redis:redis_cache"
+    volumes:
+      - ./backend/:/usr/src/app/
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - redis
+      - django
+
+  # Messaging Broker
+  redis:
+    container_name: audmix_redis
+    image: "redis:alpine"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    volumes:
+      - ./redis_data:/data
+
+  # React frontend
   frontend:
     container_name: audmix_frontend
     build: ./frontend

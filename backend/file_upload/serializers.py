@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import upload
 
+
 class uploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = upload
-        fields =['id','Name','File']
+        fields = ['id', 'Name', 'File']

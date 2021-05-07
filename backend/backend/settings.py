@@ -20,14 +20,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", default='+^5i7)$1&+$*0jec95!*e3ii=js45gbr%4d&muanq0^7@wbu&5')
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", default='+^5i7)$1&+$*0jec95!*e3ii=js45gbr%4d&muanq0^7@wbu&5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=1))
 
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default='localhost 127.0.0.1').split(" ")
+ALLOWED_HOSTS = os.environ.get(
+    "DJANGO_ALLOWED_HOSTS", default='localhost 127.0.0.1').split(" ")
 
 # Application definition
 
@@ -41,8 +43,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
-    'file_upload'
-    
+    'file_upload',
+    'processAPI',
+
 ]
 
 MIDDLEWARE = [
@@ -112,7 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -126,7 +130,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
-MEDIA_URL='/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+AUDIO_PROCESSING_ROOT = 'user_audio'
+AUDIO_PROCESSING_AUDIO_FILE_NAME = 'audio'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'

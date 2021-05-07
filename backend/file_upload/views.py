@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .serializers import uploadSerializer
 from .models import upload
 
+
 class MediaViewSet(viewsets.ModelViewSet):
-  queryset = upload.objects.all()
-  serializer_class = uploadSerializer
+    queryset = upload.objects.all()
+    serializer_class = uploadSerializer
