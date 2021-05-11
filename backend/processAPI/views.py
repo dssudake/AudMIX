@@ -5,6 +5,7 @@ from rest_framework.reverse import reverse
 
 from processAPI.models import AudioFile
 from processAPI.serializers import AudioFileSerializer
+from processAPI.tasks import preprocess_audio
 
 
 @api_view(['GET'])
@@ -29,9 +30,11 @@ class AudioFileListCreate(generics.ListCreateAPIView):
         """
         Create a new AudioFile instance
         """
+        audio_file_ext = "." + str(request.data['audio']).split('.')[-1]
         serializer = AudioFileSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            obj = serializer.save()
+            preprocess_audio.delay(obj.id, audio_file_ext)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
