@@ -1,9 +1,9 @@
 # pull official base image
-FROM python:3.8.3-alpine
+FROM tensorflow/tensorflow:2.5.0
 
 # install ffmpeg with linux static build
 ARG FFMPEGV=4.2.2
-RUN wget -q https://www.johnvansickle.com/ffmpeg/old-releases/ffmpeg-${FFMPEGV}-amd64-static.tar.xz \
+RUN curl -O https://www.johnvansickle.com/ffmpeg/old-releases/ffmpeg-${FFMPEGV}-amd64-static.tar.xz \
     && tar xJf ffmpeg-${FFMPEGV}-amd64-static.tar.xz \
     && mv ffmpeg-${FFMPEGV}-amd64-static/ffmpeg /usr/local/bin/ \
     && rm -rf ffmpeg-${FFMPEGV}-amd64-static \
@@ -20,6 +20,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
+RUN apt-get -y update && apt-get install -y libsndfile1
 
 # copy entrypoint.sh
 COPY ./entrypoint.sh .
