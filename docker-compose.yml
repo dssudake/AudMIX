@@ -21,7 +21,7 @@ services:
   celery:
     container_name: audmix_celery
     build: ./backend
-    command: celery -A backend worker -l INFO
+    command: celery -A backend worker --pool threads -l INFO
     links:
       - "redis:redis_cache"
     volumes:
@@ -57,3 +57,7 @@ services:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=True
     stdin_open: true
+    depends_on:
+      - celery
+      - redis
+      - django

@@ -25,12 +25,13 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-
-    # path('api/', include('file_upload.urls')),
+    path('api/admin/', admin.site.urls),
 
     # Audio Processing API Routes
     path('api/', include('processAPI.urls')),
+
+    # Endpoint to check celery worker task progress
+    path('api/task_status/', include('celery_progress.urls')),
 
     # Swagger API Documentation
     path('api/docs/', schema_view.with_ui('swagger',

@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
-    'file_upload',
-    'processAPI',
+    'celery_progress',
+    'processAPI.apps.ProcessapiConfig',
 
 ]
 
@@ -144,3 +144,7 @@ CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
+
+# DL Model Paths
+MODEL_ARCH_PATH = os.path.join(BASE_DIR, 'model', 'model_arch.json')
+MODEL_WEIGHT_PATH = os.path.join(BASE_DIR, 'model', 'model_weights.h5')
