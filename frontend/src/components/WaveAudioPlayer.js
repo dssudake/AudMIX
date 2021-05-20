@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+
 import { Row, Col, Button, Card, Form, Accordion } from 'react-bootstrap';
 
 import WaveSurfer from 'wavesurfer.js';
@@ -60,6 +61,14 @@ export default function WaveAudioPlayer({ url, name }) {
   const [zoom, setZoom] = useState(30);
   const [playBack, setPlayBack] = useState(1);
   const [visible, setVisible] = useState(false);
+  const [currentTime, setCurrentTime] = useState('0:0');
+  const [totalTime, setTotalTime] = useState('0:0');
+
+  const convertTime = (time) => {
+    var minutes = Math.floor(time / 60);
+    var seconds = time - minutes * 60;
+    return `${minutes}:${seconds}`;
+  };
 
   // create new WaveSurfer instance
   // On component mount and when url changes
@@ -80,8 +89,14 @@ export default function WaveAudioPlayer({ url, name }) {
       if (wavesurfer.current) {
         wavesurfer.current.setVolume(0.9);
         setIsMute(false);
-        console.log(wavesurfer.current.getDuration());
         setVolume(volume);
+        setTotalTime(convertTime(wavesurfer.current.getDuration().toFixed(0)));
+      }
+    });
+
+    wavesurfer.current.on('audioprocess', function () {
+      if (wavesurfer.current.isPlaying()) {
+        setCurrentTime(convertTime(wavesurfer.current.getCurrentTime().toFixed(0)));
       }
     });
 
@@ -155,6 +170,9 @@ export default function WaveAudioPlayer({ url, name }) {
                   >
                     {isMute ? <BsFillVolumeMuteFill /> : <BsFillVolumeUpFill />}
                   </Button>
+                  <span className="text-primary ml-4">
+                    {wavesurfer.current && currentTime + ' / ' + totalTime}
+                  </span>
                 </Col>
 
                 <Accordion.Toggle
