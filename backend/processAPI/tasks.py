@@ -1,9 +1,11 @@
 import os
 
 from celery import shared_task
+from celery_progress.backend import ProgressRecorder
 from django.conf import settings
 
 from processAPI.models import AudioFile
+from processAPI.helper import dl_noise_reduce
 
 AUDIO_FILE_NAME = 'audio'
 INCOMING_AUDIO_EXTENSION = '.mp3'
@@ -40,6 +42,34 @@ def preprocess_audio(audio_id, audio_file_ext):
                 settings.AUDIO_PROCESSING_ROOT, audio_id, PROCESSED_AUDIO_PREFIX + PROCESSED_AUDIO_EXTENSION),
         )
     except FileNotFoundError:
-        AudioFile.objects.filter(pk=audio_id).update(
-            status='media_not_found'
-        )
+        AudioFile.objects.filter(pk=audio_id).update()
+
+
+@shared_task(bind=True)
+def denoise_audio(self, audio_id):
+    """
+    Process audio through deep learning to reduce noise
+    """
+    try:
+        progress_recorder = ProgressRecorder(self)
+
+        audio_file = AudioFile.objects.get(pk=audio_id)
+        audio_file_path = audio_file.audio.path
+
+        audio_id = str(audio_id)
+        folder_path = os.path.join(
+            settings.MEDIA_ROOT, settings.AUDIO_PROCESSING_ROOT, audio_id)
+        os.chdir(folder_path)
+        progress_recorder.set_progress(5, 100)
+
+        op_file_path = dl_noise_reduce(
+            audio_id, folder_path, audio_file_path, progress_recorder)
+        progress_recorder.set_progress(95, 100)
+
+        audio_file.processed_audio = op_file_path
+        audio_file.save()
+        progress_recorder.set_progress(100, 100)
+
+        return 'AUDIO_DENOISED'
+    except FileNotFoundError:
+        AudioFile.objects.filter(pk=audio_id).update()

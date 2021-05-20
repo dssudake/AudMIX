@@ -1,11 +1,13 @@
+from django.http import Http404
 from rest_framework import status, generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 
 from processAPI.models import AudioFile
 from processAPI.serializers import AudioFileSerializer
-from processAPI.tasks import preprocess_audio
+from processAPI.tasks import preprocess_audio, denoise_audio
 
 
 @api_view(['GET'])
@@ -45,3 +47,25 @@ class AudioFileDetail(generics.RetrieveAPIView):
     """
     queryset = AudioFile.objects.all()
     serializer_class = AudioFileSerializer
+
+
+class AudioReduceNoise(APIView):
+    """
+    Noise reduction from audio file
+    - Assign celery task to Process Audio
+    - Return celery task_id in response
+    """
+
+    def get_object(self, pk):
+        try:
+            return AudioFile.objects.get(pk=pk)
+        except AudioFile.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk):
+        task = denoise_audio.delay(pk)
+        res_dict = {
+            'task_id': task.id,
+            'audio_id': pk
+        }
+        return Response(res_dict, status=status.HTTP_201_CREATED)
