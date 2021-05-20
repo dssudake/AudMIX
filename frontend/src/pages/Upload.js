@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+
 import { Container, Row, ButtonGroup, Button } from 'react-bootstrap';
 import { BsUpload } from 'react-icons/bs';
 import { BiArrowBack } from 'react-icons/bi';
@@ -10,11 +11,12 @@ import logo from '../assets/img/logo.png';
 import api from '../utils/api';
 
 export default function Upload() {
+  const history = useHistory();
+
   useEffect(() => {
     document.title = 'Upload | AudMIX';
   });
 
-  const history = useHistory();
   const [isUploaded, setIsUploaded] = useState(false);
   const [counter, setCounter] = React.useState(0);
   const [id, setId] = useState('');

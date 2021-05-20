@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+
+import { Container, Row } from 'react-bootstrap';
 
 import api from '../utils/api';
 import logo from '../assets/img/logo.png';
@@ -13,13 +14,8 @@ export default function List() {
 
   const [audData, setAudData] = useState([]);
   const fetchData = () => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
     api
-      .get('upload/', config)
+      .get('upload/')
       .then((res) => {
         setAudData(res.data);
       })

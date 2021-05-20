@@ -27,3 +27,28 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* --------- Divider Styles --------- */
+.divider {
+  background-color: #333333;
+}
+
+/* --------- Custom Modal Styles --------- */
+.modal-backdrop {
+  opacity: 0.8 !important;
+  background-color: #000;
+}
+
+.modal-content {
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #0e0e0e;
+}
+
+.modal-header {
+  border-bottom: 1px solid #333333;
+}
+
+.modal-footer {
+  border-top: 1px solid #333333;
+}

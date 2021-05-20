@@ -54,7 +54,7 @@ def denoise_audio(self, audio_id):
         progress_recorder = ProgressRecorder(self)
 
         audio_file = AudioFile.objects.get(pk=audio_id)
-        audio_file_path = audio_file.audio.path
+        audio_file_path = audio_file.processed_audio.path
 
         audio_id = str(audio_id)
         folder_path = os.path.join(
