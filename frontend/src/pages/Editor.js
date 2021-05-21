@@ -8,6 +8,12 @@ import logo from '../assets/img/logo.png';
 import api from '../utils/api';
 import WaveAudioPlayer from '../components/WaveAudioPlayer';
 
+const boxShadowStyle = {
+  borderRadius: '10px',
+  boxShadow: '11px 11px 17px #060606, -11px -11px 17px #161616',
+  padding: '15px 15px 15px 15px',
+};
+
 export default function Editor() {
   const { id } = useParams();
 
@@ -48,15 +54,18 @@ export default function Editor() {
           setPercentage(res.data.progress.percent);
           setTimeout(checkProcessStatus(task_id), 1000);
         } else {
-          setTimeout(setredNoiseModal(false), 1000);
-          fetchData();
+          setPercentage(100);
+          setTimeout(function () {
+            setredNoiseModal(false);
+            fetchData();
+          }, 2000);
         }
       })
       .catch((error) => console.log(error));
   };
 
   return (
-    <Container fluid className="pt-4 pb-5 px-5">
+    <Container fluid className="pt-4 pb-5 px-5 bg">
       <Row className="justify-content-center">
         <img src={logo} width="200" />
       </Row>
@@ -92,14 +101,7 @@ export default function Editor() {
               </Row>
             </Col>
 
-            <Col
-              style={{
-                borderRadius: '10px',
-                boxShadow: '11px 11px 17px #060606, -11px -11px 17px #161616',
-                padding: '15px 15px 15px 15px',
-              }}
-              md={4}
-            >
+            <Col style={boxShadowStyle} md={4}>
               <Button variant="primary" disabled block>
                 Compare Original {'&'} Processed Audio
               </Button>
@@ -134,23 +136,36 @@ export default function Editor() {
 
 function ProgressModal({ show, percentage }) {
   return (
-    <Modal show={show} backdrop="static" size="xl" centered scrollable>
-      <Modal.Header className="bg-dark text-primary">
-        <Modal.Title className="mx-auto">Please wait till we process the audio</Modal.Title>
+    <Modal
+      style={{
+        borderRadius: '10px',
+        boxShadow: '#060606',
+      }}
+      show={show}
+      backdrop="static"
+      className="text-primary"
+      size="lg"
+      centered
+    >
+      <Modal.Header className="bg-dark text-secondary">
+        <Modal.Title>
+          <img src={logo} width="150px" className="mr-5" />
+          <span className="ml-5 pl-5">Denoise Audio</span>
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className="p-4 bg-dark">
-        <Row>
-          <Col xs="auto">
-            <Spinner animation="grow" variant="success" />
+        <Row style={boxShadowStyle}>
+          <Col className="text-center h5 pt-3 mb-3" xs={12}>
+            Please Wait While We Process The Audio !
+          </Col>
+          <Col className xs="auto">
+            <Spinner animation="grow" variant="primary" />
           </Col>
           <Col>
-            <ProgressBar
-              className="mt-2"
-              variant="success"
-              now={percentage}
-              label={`${percentage}%`}
-              animated
-            />
+            <ProgressBar className="mt-3" variant="custom" now={percentage} />
+          </Col>
+          <Col xs={12} className="text-center text-primary">
+            {percentage < 100 ? `${percentage}% processed` : 'Complete .!'}
           </Col>
         </Row>
       </Modal.Body>

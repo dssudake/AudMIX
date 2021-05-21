@@ -41,7 +41,6 @@ def dl_noise_reduce(audio_id, folder_path, file_path, progress_recorder):
     windowLength = 256
     overlap = round(0.25 * windowLength)  # overlap of 75%
     ffTLength = windowLength
-    # inputFs = 48e3
     fs = 16e3
     numFeatures = ffTLength//2 + 1
     numSegments = 8
@@ -107,9 +106,10 @@ def dl_noise_reduce(audio_id, folder_path, file_path, progress_recorder):
     print("Min:", np.min(denoisedAudioFullyConvolutional),
           "Max:", np.max(denoisedAudioFullyConvolutional))
 
-    noisy_part = denoisedAudioFullyConvolutional[0:5250]
+    noisy_part = denoisedAudioFullyConvolutional[0:len(
+        denoisedAudioFullyConvolutional)//15]
 
-    # Perform noise reduction
+    # Perform noise reduction after model noise reduction
     reduced_noise = nr.reduce_noise(
         audio_clip=denoisedAudioFullyConvolutional, noise_clip=noisy_part, verbose=False)
     print(type(reduced_noise))
