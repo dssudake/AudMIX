@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useParams, Link } from 'react-router-dom';
 
-import { Container, Row, Col, Button, Modal, ProgressBar, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 
 import logo from '../assets/img/logo.png';
 import api from '../utils/api';
-import WaveAudioPlayer from '../components/WaveAudioPlayer';
+import WaveAudioPlayerFL from '../components/WaveAudioPlayerFL';
+import { ProgressModal, CompareModal } from '../components/EditorModals';
 
 const boxShadowStyle = {
   borderRadius: '10px',
@@ -22,6 +22,7 @@ export default function Editor() {
     fetchData();
   }, []);
 
+  // Fetch Audio Details for given id in Url
   const [audData, setAudData] = useState(null);
   const fetchData = () => {
     api
@@ -32,6 +33,7 @@ export default function Editor() {
       .catch((error) => console.log(error));
   };
 
+  // Audio Denoising API call and display updated progress
   const [redNoiseModal, setredNoiseModal] = useState(false);
   const [percentage, setPercentage] = useState(0);
   const handleAudioDenoise = () => {
@@ -64,6 +66,12 @@ export default function Editor() {
       .catch((error) => console.log(error));
   };
 
+  // Comparison Modal state handeling
+  const [showCompare, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <Container fluid className="pt-4 pb-5 px-5 bg">
       <Row className="justify-content-center">
@@ -74,7 +82,7 @@ export default function Editor() {
         ~ Process Your Audio on Cloud ~
       </Row>
 
-      <Row className="justify-content-center" style={{ marginTop: '60px' }}>
+      <Row className="justify-content-center" style={{ marginTop: '100px' }}>
         {!audData ? (
           <div className="text-primary">
             Audio file not available, check available&nbsp;
@@ -91,18 +99,15 @@ export default function Editor() {
             <Col className="pr-5">
               <Row>
                 <Col xs={12}>
-                  {audData && <WaveAudioPlayer url={audData.audio} name={'Original Audio'} />}
-                </Col>
-                <Col xs={12} className="mt-5">
                   {audData && (
-                    <WaveAudioPlayer url={audData.processed_audio} name={'Processed Audio'} />
+                    <WaveAudioPlayerFL url={audData.processed_audio} name={'Processed Audio'} />
                   )}
                 </Col>
               </Row>
             </Col>
 
             <Col style={boxShadowStyle} md={4}>
-              <Button variant="primary" disabled block>
+              <Button variant="primary" onClick={handleShow} block>
                 Compare Original {'&'} Processed Audio
               </Button>
               <hr className="divider mt-4" />
@@ -127,52 +132,11 @@ export default function Editor() {
             </Col>
 
             <ProgressModal show={redNoiseModal} percentage={percentage} />
+
+            <CompareModal show={showCompare} handleClose={handleClose} audData={audData} />
           </>
         )}
       </Row>
     </Container>
   );
 }
-
-function ProgressModal({ show, percentage }) {
-  return (
-    <Modal
-      style={{
-        borderRadius: '10px',
-        boxShadow: '#060606',
-      }}
-      show={show}
-      backdrop="static"
-      className="text-primary"
-      size="lg"
-      centered
-    >
-      <Modal.Header className="bg-dark text-secondary">
-        <Modal.Title>
-          <img src={logo} width="150px" className="mr-5" />
-          <span className="ml-5 pl-5">Denoise Audio</span>
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body className="p-4 bg-dark">
-        <Row style={boxShadowStyle}>
-          <Col className="text-center h5 pt-3 mb-3" xs={12}>
-            Please Wait While We Process The Audio !
-          </Col>
-          <Col className xs="auto">
-            <Spinner animation="grow" variant="primary" />
-          </Col>
-          <Col>
-            <ProgressBar className="mt-3" variant="custom" now={percentage} />
-          </Col>
-          <Col xs={12} className="text-center text-primary">
-            {percentage < 100 ? `${percentage}% processed` : 'Complete .!'}
-          </Col>
-        </Row>
-      </Modal.Body>
-    </Modal>
-  );
-}
-ProgressModal.propTypes = {
-  show: PropTypes.bool.isRequired,
-  percentage: PropTypes.number,
-};

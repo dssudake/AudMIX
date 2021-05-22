@@ -34,7 +34,6 @@
 }
 
 /* --------- Custom Modal Styles --------- */
-
 .modal-open .bg {
   filter: blur(5px);
   -webkit-filter: blur(5px);
@@ -56,13 +55,12 @@
 
 /* --------- Custom Progress Bar Styles --------- */
 .progress {
-  height: 8px;
+  height: 4px;
   border-radius: 10px;
   background-color: #e6e08633;
 }
+
 .progress-bar {
   background-color: #95bf9b;
-  color: #0e0e0e;
   border-radius: 10px;
-  padding-bottom: 5px;
 }
