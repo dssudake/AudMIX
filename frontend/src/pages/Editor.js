@@ -72,6 +72,19 @@ export default function Editor() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  // Function to Downlaod processed audio
+  const handeAudioDownload = () => {
+    if (audData) {
+      var link = document.createElement('a');
+      link.href = audData.processed_audio;
+      link.target = '_blank';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
     <Container fluid className="pt-4 pb-5 px-5 bg">
       <Row className="justify-content-center">
@@ -120,7 +133,12 @@ export default function Editor() {
                 Denoise Audio
               </Button>
               <hr className="divider mt-4" />
-              <Button variant="outline-secondary" className="mt-4" disabled block>
+              <Button
+                variant="outline-secondary"
+                onClick={handeAudioDownload}
+                className="mt-4"
+                block
+              >
                 Download Processed Audio
               </Button>
               <Button variant="outline-secondary" className="mt-4" disabled block>
