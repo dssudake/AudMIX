@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
 
 import { Row, Col, Button, Card, Form } from 'react-bootstrap';
@@ -8,8 +8,19 @@ import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.min.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
 import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.js';
 
-import { BsPlayFill, BsPauseFill, BsFillVolumeUpFill, BsFillVolumeMuteFill } from 'react-icons/bs';
-import { AiOutlineZoomIn, AiOutlineZoomOut } from 'react-icons/ai';
+import {
+  BsPlayFill,
+  BsPauseFill,
+  BsFillVolumeUpFill,
+  BsFillVolumeMuteFill,
+  BsStopFill,
+} from 'react-icons/bs';
+import {
+  AiOutlineZoomIn,
+  AiOutlineZoomOut,
+  AiFillStepForward,
+  AiFillStepBackward,
+} from 'react-icons/ai';
 import { ImVolumeDecrease, ImVolumeIncrease } from 'react-icons/im';
 
 const formWaveSurferOptions = (ref, reftl) => ({
@@ -24,6 +35,7 @@ const formWaveSurferOptions = (ref, reftl) => ({
   // hideScrollbar: true,
   barWidth: 2,
   // barRadius: 3,
+  skipLength: 5,
   cursorWidth: 1,
   barGap: null, // the optional spacing between bars of the wave, if not provided will be calculated in legacy format
   responsive: true,
@@ -55,7 +67,7 @@ const formWaveSurferOptions = (ref, reftl) => ({
 });
 
 // eslint-disable-next-line react/prop-types
-export default function WaveAudioPlayerFL({ url, name }) {
+function WaveAudioPlayerFL({ url, name }, ref) {
   const waveformRef = useRef(null);
   const timelineRef = useRef(null);
   const wavesurfer = useRef(null);
@@ -67,11 +79,38 @@ export default function WaveAudioPlayerFL({ url, name }) {
   const [currentTime, setCurrentTime] = useState('0:0');
   const [totalTime, setTotalTime] = useState('0:0');
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      handelWaveformExport() {
+        const wave = wavesurfer.current.exportImage();
+        var img = '';
+        if (typeof wave == 'object') {
+          img = wave[0];
+        } else if (typeof wave == 'string') {
+          img = wave;
+        }
+        var link = document.createElement('a');
+        link.href = img;
+        link.target = '_blank';
+        link.download = 'Waveform.png';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      },
+    }),
+    []
+  );
+
   const convertTime = (time) => {
     var minutes = Math.floor(time / 60);
     var seconds = time - minutes * 60;
     return `${minutes}:${seconds}`;
   };
+
+  const setCurTime = () =>
+    setCurrentTime(convertTime(wavesurfer.current.getCurrentTime().toFixed(0)));
 
   // create new WaveSurfer instance
   // On component mount and when url changes
@@ -99,7 +138,7 @@ export default function WaveAudioPlayerFL({ url, name }) {
 
     wavesurfer.current.on('audioprocess', function () {
       if (wavesurfer.current.isPlaying()) {
-        setCurrentTime(convertTime(wavesurfer.current.getCurrentTime().toFixed(0)));
+        setCurTime();
       }
     });
 
@@ -119,6 +158,21 @@ export default function WaveAudioPlayerFL({ url, name }) {
   const handlePlayPause = () => {
     setPlay(!playing);
     wavesurfer.current.playPause();
+  };
+
+  const handelStop = () => {
+    wavesurfer.current.stop();
+    setPlay(false);
+    setCurTime();
+  };
+
+  const handelSkip = (which) => {
+    if (which === 'forward') {
+      wavesurfer.current.skipForward();
+    } else if (which === 'backward') {
+      wavesurfer.current.skipBackward();
+    }
+    setCurTime();
   };
 
   const handleToggleMute = () => {
@@ -163,11 +217,28 @@ export default function WaveAudioPlayerFL({ url, name }) {
             <Row>
               <Col>
                 <Button
-                  className="rounded-circle pb-2 mr-3"
+                  className="rounded-circle pb-2 mr-2"
+                  style={btnShadow}
+                  onClick={() => handelSkip('backward')}
+                >
+                  <AiFillStepBackward />
+                </Button>
+                <Button
+                  className="rounded-circle pb-2 mr-2"
                   style={btnShadow}
                   onClick={handlePlayPause}
                 >
                   {!playing ? <BsPlayFill /> : <BsPauseFill />}
+                </Button>
+                <Button className="rounded-circle pb-2 mr-2" style={btnShadow} onClick={handelStop}>
+                  <BsStopFill />
+                </Button>
+                <Button
+                  className="rounded-circle pb-2 mr-2"
+                  style={btnShadow}
+                  onClick={() => handelSkip('forward')}
+                >
+                  <AiFillStepForward />
                 </Button>
                 <Button
                   className="rounded-circle pb-2"
@@ -262,6 +333,8 @@ export default function WaveAudioPlayerFL({ url, name }) {
     </div>
   );
 }
+
+export default forwardRef(WaveAudioPlayerFL);
 
 WaveAudioPlayerFL.propTypes = {
   url: PropTypes.string.isRequired,

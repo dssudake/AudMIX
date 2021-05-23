@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 import { Container, Row, Col, Button } from 'react-bootstrap';
@@ -16,6 +16,7 @@ const boxShadowStyle = {
 
 export default function Editor() {
   const { id } = useParams();
+  const audPlayerRef = useRef(null);
 
   useEffect(() => {
     document.title = 'Editor  | AudMIX - Process Your Audio on Cloud';
@@ -113,23 +114,22 @@ export default function Editor() {
               <Row>
                 <Col xs={12}>
                   {audData && (
-                    <WaveAudioPlayerFL url={audData.processed_audio} name={'Processed Audio'} />
+                    <WaveAudioPlayerFL
+                      ref={audPlayerRef}
+                      url={audData.processed_audio}
+                      name={'Processed Audio'}
+                    />
                   )}
                 </Col>
               </Row>
             </Col>
 
             <Col style={boxShadowStyle} md={4}>
-              <Button variant="primary" onClick={handleShow} block>
+              <Button variant="outline-secondary" onClick={handleShow} block>
                 Compare Original {'&'} Processed Audio
               </Button>
               <hr className="divider mt-4" />
-              <Button
-                variant="outline-secondary"
-                onClick={handleAudioDenoise}
-                className="mt-4"
-                block
-              >
+              <Button variant="outline-primary" onClick={handleAudioDenoise} className="mt-4" block>
                 Denoise Audio
               </Button>
               <hr className="divider mt-4" />
@@ -141,11 +141,16 @@ export default function Editor() {
               >
                 Download Processed Audio
               </Button>
-              <Button variant="outline-secondary" className="mt-4" disabled block>
-                Download Spectrogram
+              <Button
+                variant="outline-secondary"
+                className="mt-4"
+                onClick={() => audPlayerRef.current.handelWaveformExport()}
+                block
+              >
+                Download Audio Waveform
               </Button>
               <Button variant="outline-secondary" className="mt-4" disabled block>
-                Download Audio Waveform
+                Download Spectrogram
               </Button>
             </Col>
 
