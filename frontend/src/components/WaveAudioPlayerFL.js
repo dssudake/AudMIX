@@ -103,6 +103,10 @@ export default function WaveAudioPlayerFL({ url, name }) {
       }
     });
 
+    wavesurfer.current.on('finish', function () {
+      setPlay(false);
+    });
+
     // Removes events, elements and disconnects Web Audio nodes.
     // when component unmount
     return () => wavesurfer.current.destroy();
