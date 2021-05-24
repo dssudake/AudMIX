@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Container, Row } from 'react-bootstrap';
 import { BiArrowBack } from 'react-icons/bi';
 
-import logo from '../assets/img/logo.png';
+import NavBar from '../components/NavBar';
 
 export default function NotFound() {
   useEffect(() => {
@@ -12,12 +12,13 @@ export default function NotFound() {
   }, []);
 
   return (
-    <Container fluid="xl" style={{ paddingTop: '20vh' }}>
-      <Row className="justify-content-center">
-        <img src={logo} width="250" />
-      </Row>
+    <Container fluid="xl">
+      <NavBar />
 
-      <Row className="justify-content-center text-secondary my-4" style={{ fontSize: '100px' }}>
+      <Row
+        className="justify-content-center text-secondary my-4"
+        style={{ paddingTop: '15vh', fontSize: '100px' }}
+      >
         ☹️
       </Row>
 

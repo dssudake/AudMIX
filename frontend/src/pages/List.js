@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Container, Row } from 'react-bootstrap';
 
 import api from '../utils/api';
-import logo from '../assets/img/logo.png';
+import NavBar from '../components/NavBar';
 
 export default function List() {
   useEffect(() => {
@@ -23,14 +23,10 @@ export default function List() {
   };
 
   return (
-    <Container fluid="xl" className="pt-5">
-      <Row className="justify-content-center">
-        <Link to="/">
-          <img src={logo} width="200" />
-        </Link>
-      </Row>
+    <Container fluid="xl">
+      <NavBar />
 
-      <Row className="justify-content-center text-secondary my-4 h2">
+      <Row className="justify-content-center text-secondary mt-5 mb-4 h2">
         Media files Uploaded for Processing
       </Row>
 
@@ -50,9 +46,7 @@ export default function List() {
           <ol>
             {audData.map((item) => (
               <li key={item.id}>
-                <Link target="_blank" to={'/editor/' + item.id}>
-                  {item.name}
-                </Link>
+                <Link to={'/editor/' + item.id}>{item.name}</Link>
               </li>
             ))}
           </ol>

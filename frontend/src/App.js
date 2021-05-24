@@ -9,7 +9,7 @@ import NotFound from './pages/NotFound';
 
 function App() {
   return (
-    <div className="container-fluid bg-dark" style={{ minHeight: '100vh' }}>
+    <div className="container-fluid bg-dark pt-2" style={{ minHeight: '100vh' }}>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/list" component={List} />

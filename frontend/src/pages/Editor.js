@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 
 import { Container, Row, Col, Button } from 'react-bootstrap';
 
-import logo from '../assets/img/logo.png';
+import NavBar from '../components/NavBar';
 import api from '../utils/api';
 import WaveAudioPlayerFL from '../components/WaveAudioPlayerFL';
 import { ProgressModal, CompareModal } from '../components/EditorModals';
@@ -87,16 +87,14 @@ export default function Editor() {
   };
 
   return (
-    <Container fluid className="pt-4 pb-5 px-5 bg">
-      <Row className="justify-content-center">
-        <img src={logo} width="200" />
-      </Row>
+    <Container fluid className="pb-5 px-5 bg">
+      <NavBar />
 
       <Row className="justify-content-center text-secondary mt-3 h3">
         ~ Process Your Audio on Cloud ~
       </Row>
 
-      <Row className="justify-content-center" style={{ marginTop: '100px' }}>
+      <Row className="justify-content-center" style={{ marginTop: '80px' }}>
         {!audData ? (
           <div className="text-primary">
             Audio file not available, check available&nbsp;

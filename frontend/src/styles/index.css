@@ -64,3 +64,14 @@
   background-color: #95bf9b;
   border-radius: 10px;
 }
+
+/* --------- NavBar Styles --------- */
+.navbar-nav .nav-link {
+  color: #95bf9b !important;
+  padding-top: 19px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #fff !important;
+  padding-top: 19px;
+}

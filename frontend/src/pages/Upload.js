@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
-import { Container, Row, ButtonGroup, Button } from 'react-bootstrap';
+import { Container, Row, Col, ButtonGroup, Button } from 'react-bootstrap';
 import { BsUpload } from 'react-icons/bs';
 import { BiArrowBack } from 'react-icons/bi';
 import { CgBrowse } from 'react-icons/cg';
 import { AiOutlineClose } from 'react-icons/ai';
+import { GiSoundWaves } from 'react-icons/gi';
 
-import logo from '../assets/img/logo.png';
+import NavBar from '../components/NavBar';
 import api from '../utils/api';
 
 export default function Upload() {
@@ -75,12 +76,15 @@ export default function Upload() {
   };
 
   return (
-    <Container fluid="xl" style={{ paddingTop: '20vh' }}>
-      <Row className="justify-content-center">
-        <img src={logo} width="200" />
-      </Row>
+    <Container fluid="xl">
+      <NavBar />
 
-      <Row className="justify-content-center text-secondary my-5 h2">Upload Audio or Video</Row>
+      <Row className="justify-content-center text-secondary my-5 h2" style={{ paddingTop: '12vh' }}>
+        <Col xs={12} className="text-center pb-2" style={{ fontSize: '70px' }}>
+          <GiSoundWaves />
+        </Col>
+        Upload Audio or Video
+      </Row>
       {isUploaded ? (
         <Row className="justify-content-center text-center text-primary mb-4 h5">
           File successfully uploaded.
