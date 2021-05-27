@@ -7,8 +7,8 @@ from processAPI.models import AudioFile
 class UserAdmin(admin.ModelAdmin):
     fields = ('username', 'email', 'is_active',
               'is_superuser',  'last_login', 'date_joined',)
-    readonly_fields = ('username', 'email', 'is_active',
-                       'is_superuser',  'last_login', 'date_joined', )
+    readonly_fields = ('username', 'email', 'is_superuser',
+                       'last_login', 'date_joined', )
     list_display = ('username', 'email', 'is_active', 'is_staff')
     list_filter = ('is_active', 'is_staff')
     search_fields = ['username', 'email']

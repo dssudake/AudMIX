@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-import { Navbar, Nav } from 'react-bootstrap';
-import { AiOutlineHome } from 'react-icons/ai';
+import { Navbar, Nav, Button } from 'react-bootstrap';
+import { AiOutlineHome, AiOutlineLock } from 'react-icons/ai';
 import { BsCloudUpload, BsList } from 'react-icons/bs';
 
 import logo from '../assets/img/logo.png';
@@ -26,6 +27,12 @@ export default function NavBar() {
           <BsList className="mr-1 mb-1" />
           List
         </Nav.Link>
+        <Link to="/login">
+          <Button variant="outline-primary mt-3 mb-1 ml-2" size="sm">
+            <AiOutlineLock className="mr-1 mb-1" />
+            Login
+          </Button>
+        </Link>
       </Nav>
     </Navbar>
   );
