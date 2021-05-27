@@ -1,18 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
+import api from '../utils/api';
 import NavBar from '../components/NavBar';
 import InputField from '../components/InputField';
-import { signup, auth_default, clear_err_msg } from '../redux/actions/index';
+import { USERNAME_REGEX } from '../utils/regexExp';
 
 const schema = yup.object().shape({
-  username: yup.string().required('Username is Required'),
+  username: yup
+    .string()
+    .required('Username is Required')
+    .matches(USERNAME_REGEX, 'Please Enter Valid Username'),
   email: yup.string().required('Email Id is Required').email('Email must be a valid email'),
   password: yup.string().required('Password is Required'),
   confirm_password: yup
@@ -22,12 +26,10 @@ const schema = yup.object().shape({
 });
 
 export default function Signup() {
-  const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
 
   useEffect(() => {
     document.title = 'Sign Up | AudMIX';
-    dispatch(auth_default());
   }, []);
 
   const { register, handleSubmit, errors, reset } = useForm({
@@ -35,18 +37,60 @@ export default function Signup() {
     mode: 'onTouched',
   });
 
-  const onSubmit = (data) => {
-    dispatch(signup(data.username, data.email, data.password));
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [regErrors, setRegErrors] = useState('');
+
+  const signup = async (username, email, password) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const body = JSON.stringify({ username, email, password });
+
+    try {
+      const res = await api.post('auth/users/', body, config);
+      if (res.status === 200 || res.status === 201) {
+        setIsRegistered(true);
+        setRegErrors(
+          'Successfully Signed Up! Activation link has been sent to your email account.'
+        );
+        reset();
+      }
+    } catch (err) {
+      var res = err.response;
+      var msg = '';
+      if (res.status === 400 || res.status === 403 || res.status === 401) {
+        if (res.data.username !== undefined) {
+          if (
+            res.data.username[0].search('already') !== -1 &&
+            res.data.username[0].search('exists') !== -1
+          ) {
+            msg = 'Username Already Taken. Try with other.';
+          }
+        } else if (res.data.password !== undefined) {
+          msg = 'Please Enter Strong Password with minimum 8 characters.';
+        } else {
+          msg = 'Enter Valid Credentials.';
+        }
+      } else {
+        msg = 'Something went wrong! Registeration Failed';
+      }
+      setRegErrors(msg);
+    }
   };
 
-  const handeChange = () =>
-    auth.isRegistered ? dispatch(auth_default()) : dispatch(clear_err_msg());
+  const onSubmit = (data) => {
+    signup(data.username, data.email, data.password);
+  };
+
+  const handeChange = () => {
+    setRegErrors('');
+    isRegistered && setIsRegistered(false);
+  };
 
   if (auth.isAuthenticated) return <Redirect to="/" />;
-
-  if (auth.isRegistered) {
-    reset();
-  }
 
   return (
     <Container fluid="xl">
@@ -103,12 +147,10 @@ export default function Signup() {
 
                 <Form.Text
                   className={
-                    auth.isRegistered
-                      ? 'text-center text-success mt-3'
-                      : 'text-center text-danger mt-3'
+                    isRegistered ? 'text-center text-success mt-3' : 'text-center text-danger mt-3'
                   }
                 >
-                  {auth.regErrors}
+                  {regErrors}
                 </Form.Text>
               </Form>
             </Col>

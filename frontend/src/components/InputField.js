@@ -8,7 +8,12 @@ export default function InputField({ label, type, register, errors, ...inputProp
     <>
       <Form.Group className="mb-3">
         <Form.Label>{label}</Form.Label>
-        <Form.Control ref={register} type={type} {...inputProps} />
+        <Form.Control
+          className="bg-dark border-secondary text-primary"
+          ref={register}
+          type={type}
+          {...inputProps}
+        />
         <Form.Text className="text-danger">{errors}</Form.Text>
       </Form.Group>
     </>

@@ -1,4 +1,0 @@
-export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS';
-export const SIGNUP_FAIL = 'SIGNUP_FAIL';
-export const DEFAULT_AUTH_STORE = 'DEFAULT_AUTH_STORE';
-export const CLR_ERR_MSG = 'CLR_ERR_MSG';
