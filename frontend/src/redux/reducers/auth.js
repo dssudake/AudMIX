@@ -4,12 +4,14 @@ import {
   AUTH_ERR_MSG,
   USER_FETCH_SUCCESS,
   USER_FETCH_FAIL,
+  USER_LOADING_START,
   USER_LOADED_SUCCESS,
   USER_LOADED_FAIL,
   LOGOUT,
 } from '../types';
 
 const initialState = {
+  isLoading: true,
   access: localStorage.getItem('access'),
   refresh: localStorage.getItem('refresh'),
   isAuthenticated: null,
@@ -21,9 +23,16 @@ export default function (state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
+    case USER_LOADING_START:
+      return {
+        ...state,
+        isLoading: true,
+      };
+
     case USER_LOADED_SUCCESS:
       return {
         ...state,
+        isLoading: false,
         isAuthenticated: true,
         user: payload,
       };
@@ -65,6 +74,7 @@ export default function (state = initialState, action) {
         isAuthenticated: false,
         user: null,
         errors: payload,
+        isLoading: false,
       };
 
     default:

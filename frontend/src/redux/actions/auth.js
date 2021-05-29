@@ -5,6 +5,7 @@ import {
   AUTH_ERR_MSG,
   USER_FETCH_SUCCESS,
   USER_FETCH_FAIL,
+  USER_LOADING_START,
   USER_LOADED_SUCCESS,
   USER_LOADED_FAIL,
   LOGOUT,
@@ -16,6 +17,7 @@ export const load_user = () => async (dispatch) => {
       type: USER_LOADED_FAIL,
     });
   }
+  dispatch({ type: USER_LOADING_START });
   if (localStorage.getItem('access') && localStorage.getItem('user_entity')) {
     const config = {
       headers: {
