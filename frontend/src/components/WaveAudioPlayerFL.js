@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
 
-import { Row, Col, Button, Card, Form } from 'react-bootstrap';
+import { Row, Col, Button, Card, Form, Dropdown } from 'react-bootstrap';
 
 import WaveSurfer from 'wavesurfer.js';
 import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.min.js';
@@ -21,6 +21,7 @@ import {
   AiFillStepForward,
   AiFillStepBackward,
 } from 'react-icons/ai';
+import { FaRegFileAudio } from 'react-icons/fa';
 import { ImVolumeDecrease, ImVolumeIncrease } from 'react-icons/im';
 
 const formWaveSurferOptions = (ref, reftl) => ({
@@ -67,7 +68,7 @@ const formWaveSurferOptions = (ref, reftl) => ({
 });
 
 // eslint-disable-next-line react/prop-types
-function WaveAudioPlayerFL({ url, name }, ref) {
+function WaveAudioPlayerFL({ audData, url, name, handelSetData }, ref) {
   const waveformRef = useRef(null);
   const timelineRef = useRef(null);
   const wavesurfer = useRef(null);
@@ -252,7 +253,49 @@ function WaveAudioPlayerFL({ url, name }, ref) {
                 </span>
               </Col>
               <Col xs="auto" className="text-primary mt-2">
-                {name}
+                {audData && (
+                  <Dropdown>
+                    <Dropdown.Toggle block variant="outline-primary">
+                      <FaRegFileAudio />
+                      &nbsp; {name}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      {audData.audio && (
+                        <Dropdown.Item
+                          onClick={() => handelSetData(audData.audio, 'Original Audio')}
+                          className={name === 'Original Audio' ? 'active' : ''}
+                        >
+                          Original Audio
+                        </Dropdown.Item>
+                      )}
+                      {audData.denoised_audio && (
+                        <Dropdown.Item
+                          onClick={() => handelSetData(audData.denoised_audio, 'Denoised Audio')}
+                          className={name === 'Denoised Audio' ? 'active' : ''}
+                        >
+                          Denoised Audio
+                        </Dropdown.Item>
+                      )}
+                      {audData.vocals_audio && (
+                        <Dropdown.Item
+                          onClick={() => handelSetData(audData.vocals_audio, 'Vocals Only')}
+                          className={name === 'Vocals Only' ? 'active' : ''}
+                        >
+                          Vocals Only
+                        </Dropdown.Item>
+                      )}
+                      {audData.music_audio && (
+                        <Dropdown.Item
+                          onClick={() => handelSetData(audData.music_audio, 'Music only')}
+                          className={name === 'Music only' ? 'active' : ''}
+                        >
+                          Music only
+                        </Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                )}
               </Col>
             </Row>
           </Card.Header>
@@ -337,6 +380,8 @@ function WaveAudioPlayerFL({ url, name }, ref) {
 export default forwardRef(WaveAudioPlayerFL);
 
 WaveAudioPlayerFL.propTypes = {
+  audData: PropTypes.object,
   url: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  handelSetData: PropTypes.func,
 };

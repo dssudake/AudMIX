@@ -13,13 +13,13 @@ const boxShadowStyle = {
 };
 
 // Modal to display audio denoising progress
-export function ProgressModal({ show, percentage }) {
+export function ProgressModal({ modalHeader, show, percentage }) {
   return (
     <Modal show={show} backdrop="static" className="text-primary" size="lg" centered>
       <Modal.Header className="bg-dark text-secondary">
         <Modal.Title>
           <img src={logo} width="150px" className="mr-5" />
-          <span className="ml-5 pl-5">Denoise Audio</span>
+          <span className="ml-5 pl-5">{modalHeader}</span>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="p-4 bg-dark">
@@ -43,6 +43,7 @@ export function ProgressModal({ show, percentage }) {
 }
 
 ProgressModal.propTypes = {
+  modalHeader: PropTypes.string,
   show: PropTypes.bool.isRequired,
   percentage: PropTypes.number,
 };

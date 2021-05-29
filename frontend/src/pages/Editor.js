@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, ButtonGroup, Button } from 'react-bootstrap';
 
 import NavBar from '../components/NavBar';
 import api from '../utils/api';
@@ -30,18 +30,45 @@ export default function Editor() {
       .get(`process_audio/${id}/`)
       .then((res) => {
         res.status === 200 && setAudData(res.data);
+        setUrl(res.data.audio);
+        setName('Original Audio');
       })
       .catch((error) => console.log(error));
+  };
+
+  // Waveaudioplayer parameters
+  const [url, setUrl] = useState('');
+  const [name, setName] = useState('');
+
+  const handelSetData = (url, name) => {
+    setUrl(url);
+    setName(name);
   };
 
   // Audio Denoising API call and display updated progress
   const [redNoiseModal, setredNoiseModal] = useState(false);
   const [percentage, setPercentage] = useState(0);
+  const [modalHeader, setModalHeader] = useState('');
   const handleAudioDenoise = () => {
     api
       .put(`process_audio/${id}/reduce_noise/`)
       .then((res) => {
         if (res.status === 201) {
+          setModalHeader('Denoise Audio');
+          setredNoiseModal(true);
+          checkProcessStatus(res.data.task_id);
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  // Audio Separate API call and display updated progress
+  const handleAudioSeparate = () => {
+    api
+      .put(`process_audio/${id}/separate_audio/`)
+      .then((res) => {
+        if (res.status === 201) {
+          setModalHeader('Separate Vocals & Music');
           setredNoiseModal(true);
           checkProcessStatus(res.data.task_id);
         }
@@ -110,15 +137,19 @@ export default function Editor() {
           <>
             <Col className="pr-5">
               <Row>
-                <Col xs={12}>
-                  {audData && (
-                    <WaveAudioPlayerFL
-                      ref={audPlayerRef}
-                      url={audData.processed_audio}
-                      name={'Processed Audio'}
-                    />
-                  )}
-                </Col>
+                {url && (
+                  <Col xs={12}>
+                    {audData && (
+                      <WaveAudioPlayerFL
+                        ref={audPlayerRef}
+                        audData={audData}
+                        url={url}
+                        name={name}
+                        handelSetData={handelSetData}
+                      />
+                    )}
+                  </Col>
+                )}
               </Row>
             </Col>
 
@@ -127,9 +158,24 @@ export default function Editor() {
                 Compare Original {'&'} Processed Audio
               </Button>
               <hr className="divider mt-4" />
-              <Button variant="outline-primary" onClick={handleAudioDenoise} className="mt-4" block>
-                Denoise Audio
-              </Button>
+              <ButtonGroup className="w-100">
+                <Button
+                  variant="outline-primary"
+                  onClick={handleAudioDenoise}
+                  disabled={audData.denoised_audio !== null}
+                  className="mt-4"
+                >
+                  Denoise Audio
+                </Button>
+                <Button
+                  variant="outline-secondary"
+                  onClick={handleAudioSeparate}
+                  disabled={audData.vocals_audio !== null}
+                  className="mt-4"
+                >
+                  Separate Audio
+                </Button>
+              </ButtonGroup>
               <hr className="divider mt-4" />
               <Button
                 variant="outline-secondary"
@@ -152,7 +198,7 @@ export default function Editor() {
               </Button>
             </Col>
 
-            <ProgressModal show={redNoiseModal} percentage={percentage} />
+            <ProgressModal modalHeader={modalHeader} show={redNoiseModal} percentage={percentage} />
 
             <CompareModal show={showCompare} handleClose={handleClose} audData={audData} />
           </>

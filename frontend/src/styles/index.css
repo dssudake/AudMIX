@@ -75,3 +75,32 @@
   color: #fff !important;
   padding-top: 19px;
 }
+
+/* --------- Dropdown Styles --------- */
+.dropdown-menu {
+  font-size: smaller;
+  color: #95bf9b;
+  background-color: #0e0e0e;
+  border: #95bf9b solid 2px;
+}
+.dropdown-item {
+  color: #95bf9b;
+  background-color: transparent;
+}
+.dropdown-menu a:hover {
+  color: #95bf9b;
+  background-color: #e6e08633;
+}
+.dropdown-menu .active {
+  color: #95bf9b;
+  background-color: #e6e08633;
+}
+.dropdown-menu .active:hover {
+  color: #95bf9b;
+  background-color: #e6e08633;
+}
+.dropdown-menu {
+  font-size: 100%;
+  text-align: center;
+  width: 100%;
+}

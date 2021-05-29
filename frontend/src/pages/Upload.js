@@ -47,7 +47,7 @@ export default function Upload() {
       .then((res) => {
         if (res.status === 201) {
           setIsUploaded(true);
-          setCounter(6);
+          setCounter(3);
           setId(res.data.id);
         }
       })
