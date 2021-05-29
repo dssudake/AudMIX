@@ -7,7 +7,7 @@ from rest_framework.reverse import reverse
 
 from processAPI.models import AudioFile
 from processAPI.serializers import AudioFileSerializer
-from processAPI.tasks import preprocess_audio, denoise_audio
+from processAPI.tasks import preprocess_audio, denoise_audio, seperate_audio
 
 
 @api_view(['GET'])
@@ -64,6 +64,22 @@ class AudioReduceNoise(APIView):
 
     def put(self, request, pk):
         task = denoise_audio.delay(pk)
+        res_dict = {
+            'task_id': task.id,
+            'audio_id': pk
+        }
+        return Response(res_dict, status=status.HTTP_201_CREATED)
+
+
+class AudioSeparate(APIView):
+    """
+    Seperate vocals and music from songs
+    - Assign celery task to Seperate Audio
+    - Return celery task_id in response
+    """
+
+    def put(self, request, pk):
+        task = seperate_audio.delay(pk)
         res_dict = {
             'task_id': task.id,
             'audio_id': pk

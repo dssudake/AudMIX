@@ -1,4 +1,5 @@
 import os
+import time
 
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
@@ -71,5 +72,40 @@ def denoise_audio(self, audio_id):
         progress_recorder.set_progress(100, 100)
 
         return 'AUDIO_DENOISED'
+    except FileNotFoundError:
+        AudioFile.objects.filter(pk=audio_id).update()
+
+
+@shared_task(bind=True)
+def seperate_audio(self, audio_id):
+    try:
+        progress_recorder = ProgressRecorder(self)
+        progress_recorder.set_progress(5, 100)
+
+        audio_file = AudioFile.objects.get(pk=audio_id)
+        audio_file_path = audio_file.audio.path
+        folder_path = os.path.join(
+            settings.MEDIA_ROOT, settings.AUDIO_PROCESSING_ROOT, audio_id)
+        os.chdir(folder_path)
+        output_folder = os.path.join(folder_path, 'seperated_output')
+        progress_recorder.set_progress(15, 100)
+
+        # Change directory for Spleeter and run Command to seperate audio
+        os.chdir(settings.BASE_DIR)
+        os.system('spleeter separate -p spleeter:2stems -c mp3 -b 512k -o ' +
+                  output_folder+' '+audio_file_path)
+        progress_recorder.set_progress(75, 100)
+
+        vocal_path = os.path.join(
+            settings.AUDIO_PROCESSING_ROOT, audio_id, 'seperated_output', 'audio', 'vocals.mp3')
+        music_path = os.path.join(settings.AUDIO_PROCESSING_ROOT,
+                                  audio_id, 'seperated_output', 'audio', 'accompaniment.mp3')
+
+        audio_file.vocals_audio = vocal_path
+        audio_file.music_audio = music_path
+        progress_recorder.set_progress(90, 100)
+        audio_file.save()
+        progress_recorder.set_progress(100, 100)
+        return 'AUDIO_SEPARATED'
     except FileNotFoundError:
         AudioFile.objects.filter(pk=audio_id).update()

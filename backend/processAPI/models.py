@@ -39,6 +39,8 @@ class AudioFile(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     audio = models.FileField(upload_to=get_file_path)
     processed_audio = models.FileField()
+    vocals_audio = models.FileField()
+    music_audio = models.FileField()
 
     def __str__(self):
         return str(self.name)

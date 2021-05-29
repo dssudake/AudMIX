@@ -8,3 +8,4 @@ media
 migrations
 .vscode/*
 redis_data/
+pretrained_models

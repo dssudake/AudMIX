@@ -10,4 +10,6 @@ urlpatterns = [
          name='audio-detail'),
     path('process_audio/<uuid:pk>/reduce_noise/', views.AudioReduceNoise.as_view(),
          name='audio-reduce-noise'),
+    path('process_audio/<uuid:pk>/separate_audio/', views.AudioSeparate.as_view(),
+         name='audio-seperate-audio'),
 ]
