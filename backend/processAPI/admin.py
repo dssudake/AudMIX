@@ -18,8 +18,9 @@ class AudioFileAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'created_at', 'modified_at',)
     search_fields = ('id', 'name',)
     fields = ('id', 'modified_at', 'created_at',
-              'name', 'audio', 'processed_audio')
-    readonly_fields = ('id', 'created_at', 'modified_at', 'processed_audio',)
+              'name', 'audio', 'processed_audio', 'denoised_audio', 'vocals_audio', 'music_audio')
+    readonly_fields = ('id', 'created_at', 'modified_at', 'processed_audio',
+                       'denoised_audio', 'vocals_audio', 'music_audio')
 
 
 # Register your models here.

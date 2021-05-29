@@ -67,7 +67,7 @@ def denoise_audio(self, audio_id):
             audio_id, folder_path, audio_file_path, progress_recorder)
         progress_recorder.set_progress(95, 100)
 
-        audio_file.processed_audio = op_file_path
+        audio_file.denoised_audio = op_file_path
         audio_file.save()
         progress_recorder.set_progress(100, 100)
 
