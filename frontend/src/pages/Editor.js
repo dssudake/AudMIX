@@ -104,7 +104,7 @@ export default function Editor() {
   const handeAudioDownload = () => {
     if (audData) {
       var link = document.createElement('a');
-      link.href = audData.processed_audio;
+      link.href = url;
       link.target = '_blank';
       link.style.display = 'none';
       document.body.appendChild(link);
@@ -200,7 +200,12 @@ export default function Editor() {
 
             <ProgressModal modalHeader={modalHeader} show={redNoiseModal} percentage={percentage} />
 
-            <CompareModal show={showCompare} handleClose={handleClose} audData={audData} />
+            <CompareModal
+              show={showCompare}
+              handleClose={handleClose}
+              audData={audData}
+              handelSetData={handelSetData}
+            />
           </>
         )}
       </Row>

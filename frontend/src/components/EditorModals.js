@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Row, Col, Modal, ProgressBar, Spinner, Button } from 'react-bootstrap';
@@ -50,6 +50,19 @@ ProgressModal.propTypes = {
 
 // Modal to display comparison between original and processed audio
 export function CompareModal({ show, handleClose, audData }) {
+  const [url1, setUrl1] = useState(audData.audio);
+  const [name1, setName1] = useState('Original Audio');
+  const handleSetData1 = (url, name) => {
+    setUrl1(url);
+    setName1(name);
+  };
+  const [url2, setUrl2] = useState(audData.audio);
+  const [name2, setName2] = useState('Original Audio');
+  const handleSetData2 = (url, name) => {
+    setUrl2(url);
+    setName2(name);
+  };
+  // console.log(show);
   return (
     <Modal
       show={show}
@@ -66,10 +79,26 @@ export function CompareModal({ show, handleClose, audData }) {
       <Modal.Body className="p-4 bg-dark">
         <Row>
           <Col xs={12}>
-            {audData && <WaveAudioPlayer url={audData.audio} name={'Original Audio'} />}
+            {audData && (
+              <WaveAudioPlayer
+                url={url1}
+                name={name1}
+                handelSetData={handleSetData1}
+                audData={audData}
+                up={false}
+              />
+            )}
           </Col>
           <Col xs={12} className="mt-5">
-            {audData && <WaveAudioPlayer url={audData.processed_audio} name={'Processed Audio'} />}
+            {audData && (
+              <WaveAudioPlayer
+                url={url2}
+                name={name2}
+                handelSetData={handleSetData2}
+                audData={audData}
+                up={true}
+              />
+            )}
           </Col>
         </Row>
       </Modal.Body>
@@ -86,4 +115,5 @@ CompareModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func,
   audData: PropTypes.object,
+  handelSetData: PropTypes.func,
 };

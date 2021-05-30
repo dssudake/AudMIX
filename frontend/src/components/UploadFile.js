@@ -21,7 +21,7 @@ export default function UploadFile({ handelUpload, setfile, File }) {
   const handleFileBrowse = () => {
     const fileSelector = document.createElement('input');
     fileSelector.setAttribute('type', 'file');
-    fileSelector.setAttribute('accept', 'audio/*,video/*');
+    fileSelector.setAttribute('accept', 'audio/*');
     fileSelector.click();
     fileSelector.addEventListener('change', function (event) {
       var file = event.target.files[0];

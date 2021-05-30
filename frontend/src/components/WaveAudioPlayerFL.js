@@ -314,7 +314,7 @@ function WaveAudioPlayerFL({ audData, url, name, handelSetData }, ref) {
                       style={{ width: '200px' }}
                       min="0.01" // waveSurfer recognize value of `0` same as `1` so we need to set some zero-ish value for silence
                       max="1"
-                      step=".025"
+                      step=".015"
                       onChange={onVolumeChange}
                       defaultValue={volume}
                       disabled={isMute}

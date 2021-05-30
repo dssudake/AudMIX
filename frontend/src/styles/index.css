@@ -77,6 +77,10 @@
 }
 
 /* --------- Dropdown Styles --------- */
+
+.accordion .card {
+  overflow: inherit;
+}
 .dropdown-menu {
   font-size: smaller;
   color: #95bf9b;
@@ -102,5 +106,34 @@
 .dropdown-menu {
   font-size: 100%;
   text-align: center;
-  width: 100%;
+  width: 75%;
+}
+
+/* --------- Slider Styles --------- */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input[type='range'] {
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
+    border: 1.5px solid #a39f60;
+    -webkit-appearance: none;
+    background-color: #161616;
+  }
+
+  input[type='range']::-webkit-slider-runnable-track {
+    height: 10px;
+    -webkit-appearance: none;
+    margin-top: auto;
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    margin-top: auto;
+    width: 20px;
+    height: 10px;
+    background: #95bf9b;
+    border: 1px solid #e6e08633;
+    border-radius: 5px;
+    box-shadow: -100px 0 0 90px #799b7ed2;
+  }
 }

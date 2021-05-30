@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { Row, Col, Button, Card, Form, Accordion } from 'react-bootstrap';
+import { Row, Col, Button, Card, Form, Accordion, Dropdown } from 'react-bootstrap';
 
 import WaveSurfer from 'wavesurfer.js';
 import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.min.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
-
+import { FaRegFileAudio } from 'react-icons/fa';
 import { BsPlayFill, BsPauseFill, BsFillVolumeUpFill, BsFillVolumeMuteFill } from 'react-icons/bs';
 import { AiOutlineZoomIn, AiOutlineZoomOut, AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import { ImVolumeDecrease, ImVolumeIncrease } from 'react-icons/im';
@@ -51,7 +51,7 @@ const formWaveSurferOptions = (ref, reftl) => ({
 });
 
 // eslint-disable-next-line react/prop-types
-export default function WaveAudioPlayer({ url, name }) {
+export default function WaveAudioPlayer({ url, name, handelSetData, audData, up }) {
   const waveformRef = useRef(null);
   const timelineRef = useRef(null);
   const wavesurfer = useRef(null);
@@ -159,7 +159,7 @@ export default function WaveAudioPlayer({ url, name }) {
           <Card className="bg-dark border-0">
             <Card.Header>
               <Row>
-                <Col>
+                <Col xs={4}>
                   <Button
                     className="rounded-circle pb-2 mr-3"
                     style={btnShadow}
@@ -178,17 +178,63 @@ export default function WaveAudioPlayer({ url, name }) {
                     {wavesurfer.current && currentTime + ' / ' + totalTime}
                   </span>
                 </Col>
+                <Col xs={4} style={{ textAlign: 'center' }}>
+                  {audData && (
+                    <Dropdown drop={up ? 'up' : 'down'}>
+                      <Dropdown.Toggle className="w-75" variant="outline-secondary">
+                        <FaRegFileAudio />
+                        &nbsp; {name}
+                      </Dropdown.Toggle>
 
-                <Accordion.Toggle
-                  as={Button}
-                  variant="link"
-                  className="rounded text-primary"
-                  eventKey="0"
-                  onClick={() => setVisible(!visible)}
-                >
-                  <span className="text-primary mr-2">{name}</span>
-                  {visible ? <AiOutlineMinus /> : <AiOutlinePlus />}
-                </Accordion.Toggle>
+                      <Dropdown.Menu>
+                        {audData.audio && (
+                          <Dropdown.Item
+                            onClick={() => handelSetData(audData.audio, 'Original Audio')}
+                            className={name === 'Original Audio' ? 'active' : ''}
+                          >
+                            Original Audio
+                          </Dropdown.Item>
+                        )}
+                        {audData.denoised_audio && (
+                          <Dropdown.Item
+                            onClick={() => handelSetData(audData.denoised_audio, 'Denoised Audio')}
+                            className={name === 'Denoised Audio' ? 'active' : ''}
+                          >
+                            Denoised Audio
+                          </Dropdown.Item>
+                        )}
+                        {audData.vocals_audio && (
+                          <Dropdown.Item
+                            onClick={() => handelSetData(audData.vocals_audio, 'Vocals Only')}
+                            className={name === 'Vocals Only' ? 'active' : ''}
+                          >
+                            Vocals Only
+                          </Dropdown.Item>
+                        )}
+                        {audData.music_audio && (
+                          <Dropdown.Item
+                            onClick={() => handelSetData(audData.music_audio, 'Music only')}
+                            className={name === 'Music only' ? 'active' : ''}
+                          >
+                            Music only
+                          </Dropdown.Item>
+                        )}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  )}
+                </Col>
+                <Col xs={4} style={{ textAlign: 'right' }}>
+                  <Accordion.Toggle
+                    as={Button}
+                    variant="link"
+                    className="rounded text-primary"
+                    eventKey="0"
+                    onClick={() => setVisible(!visible)}
+                  >
+                    <span className="text-primary mr-2">Options</span>
+                    {visible ? <AiOutlineMinus /> : <AiOutlinePlus />}
+                  </Accordion.Toggle>
+                </Col>
               </Row>
             </Card.Header>
 
@@ -275,4 +321,7 @@ export default function WaveAudioPlayer({ url, name }) {
 WaveAudioPlayer.propTypes = {
   url: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  handelSetData: PropTypes.func,
+  audData: PropTypes.object,
+  up: PropTypes.bool,
 };
