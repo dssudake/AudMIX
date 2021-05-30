@@ -32,9 +32,9 @@ export default function Home() {
         <Card className="text-center bg-dark border-0" style={{ width: '18rem' }}>
           <Card.Body>
             <BsCloudUpload className="text-primary h1" />
-            <Card.Title className="text-success">Upload Audio / Video</Card.Title>
+            <Card.Title className="text-success">Upload / Record Audio</Card.Title>
             <Card.Text className="text-primary">
-              Upload Audio or Video to be Modified in the online <br />
+              Upload or Record Audio to be Modified in the online <br />
               editor
             </Card.Text>
           </Card.Body>
@@ -55,7 +55,9 @@ export default function Home() {
             <BsCloudDownload className="text-primary h1" />
             <Card.Title className="text-success">Get Modified Audio</Card.Title>
             <Card.Text className="text-primary">
-              Download modified audio or video content or share with others
+              Download modified audio <br /> files and share with
+              <br />
+              others
             </Card.Text>
           </Card.Body>
         </Card>
