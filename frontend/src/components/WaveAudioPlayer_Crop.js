@@ -11,6 +11,8 @@ import { FaRegFileAudio } from 'react-icons/fa';
 import { BsPlayFill, BsPauseFill, BsFillVolumeUpFill, BsFillVolumeMuteFill } from 'react-icons/bs';
 import { AiOutlineZoomIn, AiOutlineZoomOut } from 'react-icons/ai';
 import { ImVolumeDecrease, ImVolumeIncrease } from 'react-icons/im';
+import { ProgressModal } from '../components/EditorModals';
+import api from '../utils/api';
 const formWaveSurferOptions = (ref, reftl) => ({
   container: ref,
   waveColor: '#3e3e3e',
@@ -55,7 +57,7 @@ const formWaveSurferOptions = (ref, reftl) => ({
   ],
 });
 // eslint-disable-next-line react/prop-types
-export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData, up }) {
+export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData, up, uuid }) {
   const waveformRef = useRef(null);
   const timelineRef = useRef(null);
   const wavesurfer = useRef(null);
@@ -75,7 +77,9 @@ export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData,
   const [Reg3Start, setReg3Start] = useState(0);
   const [Reg3End, setReg3End] = useState(0);
   const [waveTime, setwaveTime] = useState(0);
-
+  const [redNoiseModal, setredNoiseModal] = useState(false);
+  const [percentage, setPercentage] = useState(0);
+  const [modalHeader, setModalHeader] = useState('');
   const convertTime = (time) => {
     var minutes = Math.floor(time / 60);
     var seconds = time - minutes * 60;
@@ -122,7 +126,11 @@ export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData,
       case 1:
         setnumber(1);
         wavesurfer.current.clearRegions();
-        setRegionOptions('1', waveTime / 10, 2 * (waveTime / 10));
+        setRegionOptions(
+          '1',
+          wavesurfer.current.getDuration().toFixed(0) / 10,
+          2 * (wavesurfer.current.getDuration().toFixed(0) / 10)
+        );
         wavesurfer.current.addRegion(RegionOptions);
         setReg2Start(0);
         setReg2End(0);
@@ -152,11 +160,52 @@ export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData,
         break;
     }
   };
+  const CropUpload = (segmentData) => {
+    const uploadData = new FormData();
+    uploadData.append('name', name);
+    uploadData.append('Segments', segmentData);
+    api
+      .put(`/process_audio/${uuid}/crop_audio/`, uploadData, {})
+      .then((res) => {
+        if (res.status === 201) {
+          setModalHeader('Crop & Merge');
+          setredNoiseModal(true);
+          checkProcessStatus(res.data.task_id);
+          console.log(res.data);
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+  const checkProcessStatus = (task_id) => {
+    api
+      .get(`task_status/${task_id}/`)
+      .then((res) => {
+        if (!res.data.complete) {
+          setPercentage(res.data.progress.percent);
+          setTimeout(checkProcessStatus(task_id), 1000);
+        } else {
+          setPercentage(100);
+          setTimeout(function () {
+            setredNoiseModal(false);
+          }, 2000);
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+  // console.log(uuid);
   // Post the results to backend
   const display = () => {
-    console.log('1 : ' + Reg1Start.toFixed(2) + '/' + Reg1End.toFixed(2));
-    console.log('2 : ' + Reg2Start.toFixed(2) + '/' + Reg2End.toFixed(2));
-    console.log('3 : ' + Reg3Start.toFixed(2) + '/' + Reg3End.toFixed(2));
+    var segments = [
+      [Reg1Start, Reg1End],
+      [Reg2Start, Reg2End],
+      [Reg3Start, Reg3End],
+    ];
+    console.log(segments);
+    CropUpload(segments);
+    if (name === 'Original Audio') handelSetData(audData.audio, 'Original Audio');
+    else if (name === 'Denoised Audio') handelSetData(audData.denoised_audio, 'Denoised Audio');
+    else if (name === 'Vocals Only') handelSetData(audData.vocals_audio, 'Vocals Only');
+    else handelSetData(audData.music_audio, 'Music only');
   };
   // create new WaveSurfer instance
   // On component mount and when url changes
@@ -172,12 +221,8 @@ export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData,
       wavesurfer.current.on('region-created', updateLabel);
       wavesurfer.current.on('region-updated', updateLabel);
       setwaveTime(wavesurfer.current.getDuration().toFixed(0));
-      setRegionOptions(
-        '1',
-        wavesurfer.current.getDuration().toFixed(0) / 10,
-        2 * (wavesurfer.current.getDuration().toFixed(0) / 10)
-      );
-      wavesurfer.current.addRegion(RegionOptions);
+      wavesurfer.current.clearRegions();
+      region(1);
 
       if (wavesurfer.current) {
         wavesurfer.current.setVolume(1);
@@ -246,8 +291,8 @@ export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData,
       <Card ref={waveformRef} className="rounded-top bg-dark border-0" />
       <Card ref={timelineRef} className="rounded-top bg-dark border-0" />
 
-      <Card className="bg-dark border-0 py-2">
-        <Card className="bg-dark border-0">
+      <Card className="bg-dark border-0 py-2 ">
+        <Card className="bg-dark border-0 ">
           <Card.Header>
             <Row>
               <Col xs={4}>
@@ -316,7 +361,7 @@ export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData,
               </Col>
               <Col xs={4} style={{ textAlign: 'right' }}>
                 <Button variant="outline-primary" onClick={() => display()}>
-                  Crop Audio Segments
+                  Crop {'&'} Merged Audio Segments
                 </Button>
               </Col>
             </Row>
@@ -427,6 +472,7 @@ export default function WaveAudioPlayerCrop({ url, name, handelSetData, audData,
           </Card.Body>
         </Card>
       </Card>
+      <ProgressModal modalHeader={modalHeader} show={redNoiseModal} percentage={percentage} />
     </div>
   );
 }
@@ -437,4 +483,5 @@ WaveAudioPlayerCrop.propTypes = {
   handelSetData: PropTypes.func,
   audData: PropTypes.object,
   up: PropTypes.bool,
+  uuid: PropTypes.string,
 };

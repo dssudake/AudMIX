@@ -1,6 +1,7 @@
 import os
 import time
-
+import glob
+import numpy as np
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 from django.conf import settings
@@ -109,3 +110,90 @@ def seperate_audio(self, audio_id):
         return 'AUDIO_SEPARATED'
     except FileNotFoundError:
         AudioFile.objects.filter(pk=audio_id).update()
+
+
+@shared_task(bind=True)
+def crop_and_merge(self, pk, name, segments):
+    try:
+        segments = segments.split(',')
+        segments = [float(i) for i in segments]
+        segments = np.reshape(segments, (3, 2))
+        audio_file = AudioFile.objects.get(pk=pk)
+        audio_file_path = audio_file.audio.path
+        output_folder_name = 'Original_Audio'
+        if(name == 'Denoised Audio'):
+            audio_file_path = audio_file.denoised_audio.path
+            output_folder_name = 'Denoised_Audio'
+        elif(name == 'Vocals Only'):
+            audio_file_path = audio_file.vocals_audio.path
+            output_folder_name = 'Vocals_Only'
+        elif(name == 'Music only'):
+            audio_file_path = audio_file.music_audio.path
+            output_folder_name = 'Music_Only'
+
+        # audio_file_path = audio_file.audio.path
+        folder_path = os.path.join(
+            settings.MEDIA_ROOT, settings.AUDIO_PROCESSING_ROOT, pk)
+        os.chdir(folder_path)
+        output_folder = os.path.join(
+            folder_path, 'Cropped_Files', output_folder_name)
+
+        # Create folder if not exist
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+
+        # Delete Previous Files
+        delete = os.path.join(output_folder, '*')
+        print('delete : ', delete)
+        files = glob.glob(delete)
+        for f in files:
+            os.remove(f)
+
+        # Crop and add new segment files
+        n = 0
+        locations = []
+        print(n)
+        print(locations)
+        for i in range(0, 3):
+            start = segments[i][0]
+            end = segments[i][1]
+            file_name = output_folder_name+'_Segment'+str(i+1)+'.mp3'
+            output = os.path.join(output_folder, file_name)
+            if(start != 0.0 and end != 0.0):
+                n = n+1
+                os.system(
+                    'ffmpeg -y -i '+audio_file_path
+                    + ' -ss '+str(start) + ' -to '+str(end)+' '+output
+                )
+                locations.append(output)
+
+        # Merge the Cropped Segments
+        merged_file_name = output_folder_name+'_Merged_Segments.mp3'
+        output = os.path.join(output_folder, merged_file_name)
+        if(n == 1):
+            os.system('ffmpeg -i '+locations[0]+' '+output)
+        elif(n == 2):
+            os.system('ffmpeg -i "concat:' +
+                      locations[0]+'|'+locations[1]+'" -acodec copy '+output)
+        elif(n == 3):
+            os.system('ffmpeg -i "concat:' +
+                      locations[0]+'|'+locations[1]+'|'+locations[2]+'" -acodec copy '+output)
+
+        # Overwrite Merged Audio
+        if(name == 'Original Audio'):
+            audio_file.audio = os.path.join(
+                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, merged_file_name)
+        elif(name == 'Denoised Audio'):
+            audio_file.denoised_audio = os.path.join(
+                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, merged_file_name)
+        elif(name == 'Vocals Only'):
+            audio_file.vocals_audio = os.path.join(
+                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, merged_file_name)
+        elif(name == 'Music only'):
+            audio_file.music_audio = os.path.join(
+                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, merged_file_name)
+        audio_file.save()
+        return 'AUDIO_CROPPED_AND_MERGED'
+
+    except FileNotFoundError:
+        AudioFile.objects.filter(pk=pk).update()

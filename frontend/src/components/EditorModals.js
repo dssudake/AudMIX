@@ -120,7 +120,7 @@ CompareModal.propTypes = {
   handelSetData: PropTypes.func,
 };
 
-export function CropModal({ show, handleClose, audData }) {
+export function CropModal({ show, handleClose, audData, uuid }) {
   const [url1, setUrl1] = useState(audData.audio);
   const [name1, setName1] = useState('Original Audio');
   const handleSetData1 = (url, name) => {
@@ -155,6 +155,7 @@ export function CropModal({ show, handleClose, audData }) {
                 handelSetData={handleSetData1}
                 audData={audData}
                 up={false}
+                uuid={uuid}
               />
             )}
           </Col>
@@ -174,4 +175,5 @@ CropModal.propTypes = {
   handleClose: PropTypes.func,
   audData: PropTypes.object,
   handelSetData: PropTypes.func,
+  uuid: PropTypes.string,
 };

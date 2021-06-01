@@ -116,7 +116,6 @@ export default function Editor() {
       document.body.removeChild(link);
     }
   };
-
   return (
     <Container fluid className="pb-5 px-5 bg">
       <NavBar />
@@ -218,6 +217,7 @@ export default function Editor() {
               handleClose={handleCloseCrop}
               audData={audData}
               handelSetData={handelSetData}
+              uuid={String(id)}
             />
           </>
         )}

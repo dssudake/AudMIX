@@ -12,4 +12,6 @@ urlpatterns = [
          name='audio-reduce-noise'),
     path('process_audio/<uuid:pk>/separate_audio/', views.AudioSeparate.as_view(),
          name='audio-seperate-audio'),
+    path('process_audio/<uuid:pk>/crop_audio/', views.AudioCrop.as_view(),
+         name='audio-crop-segments'),
 ]
