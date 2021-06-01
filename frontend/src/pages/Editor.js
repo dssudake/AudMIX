@@ -6,7 +6,7 @@ import { Container, Row, Col, ButtonGroup, Button } from 'react-bootstrap';
 import NavBar from '../components/NavBar';
 import api from '../utils/api';
 import WaveAudioPlayerFL from '../components/WaveAudioPlayerFL';
-import { ProgressModal, CompareModal } from '../components/EditorModals';
+import { ProgressModal, CompareModal, CropModal } from '../components/EditorModals';
 
 const boxShadowStyle = {
   borderRadius: '10px',
@@ -96,9 +96,13 @@ export default function Editor() {
 
   // Comparison Modal state handeling
   const [showCompare, setShow] = useState(false);
+  const [showCrop, setShowCrop] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleCloseCrop = () => setShowCrop(false);
+  const handleShowCrop = () => setShowCrop(true);
 
   // Function to Downlaod processed audio
   const handeAudioDownload = () => {
@@ -176,6 +180,9 @@ export default function Editor() {
                   Separate Audio
                 </Button>
               </ButtonGroup>
+              <Button className="mt-4" variant="outline-secondary" onClick={handleShowCrop} block>
+                Crop Audio
+              </Button>
               <hr className="divider mt-4" />
               <Button
                 variant="outline-secondary"
@@ -203,6 +210,12 @@ export default function Editor() {
             <CompareModal
               show={showCompare}
               handleClose={handleClose}
+              audData={audData}
+              handelSetData={handelSetData}
+            />
+            <CropModal
+              show={showCrop}
+              handleClose={handleCloseCrop}
               audData={audData}
               handelSetData={handelSetData}
             />

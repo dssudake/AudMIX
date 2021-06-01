@@ -49,7 +49,6 @@ const formWaveSurferOptions = (ref, reftl) => ({
     }),
   ],
 });
-
 // eslint-disable-next-line react/prop-types
 export default function WaveAudioPlayer({ url, name, handelSetData, audData, up }) {
   const waveformRef = useRef(null);
@@ -61,13 +60,14 @@ export default function WaveAudioPlayer({ url, name, handelSetData, audData, up 
   const [zoom, setZoom] = useState(30);
   const [playBack, setPlayBack] = useState(1);
   const [visible, setVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState('0:0');
-  const [totalTime, setTotalTime] = useState('0:0');
+  const [currentTime, setCurrentTime] = useState('0:00');
+  const [totalTime, setTotalTime] = useState('0:00');
 
   const convertTime = (time) => {
     var minutes = Math.floor(time / 60);
     var seconds = time - minutes * 60;
-    return `${minutes}:${seconds}`;
+    if (seconds < 10) return `${minutes}:0${seconds}`;
+    else return `${minutes}:${seconds}`;
   };
 
   // create new WaveSurfer instance
@@ -87,7 +87,7 @@ export default function WaveAudioPlayer({ url, name, handelSetData, audData, up 
 
       // make sure object stillavailable when file loaded
       if (wavesurfer.current) {
-        wavesurfer.current.setVolume(0.9);
+        wavesurfer.current.setVolume(1);
         setIsMute(false);
         setVolume(volume);
         setTotalTime(convertTime(wavesurfer.current.getDuration().toFixed(0)));

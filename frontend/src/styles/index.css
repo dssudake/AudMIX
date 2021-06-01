@@ -137,3 +137,60 @@
     box-shadow: -100px 0 0 90px #799b7ed2;
   }
 }
+
+/* Regions */
+.wavesurfer-region {
+  border-top: 1px solid #95bf9b !important;
+  border-bottom: 1px solid #95bf9b !important;
+  padding-bottom: 100px;
+  border: 1px solid #95bf9b !important;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+/* Region handles */
+.wavesurfer-handle {
+  width: 10px !important;
+  max-width: 10px !important;
+  border: 1.5px solid #0e0e0ebb;
+  background: #0e0e0e8c !important;
+  border-radius: 4px !important;
+  box-sizing: border-box;
+}
+
+.wavesurfer-handle-end {
+  margin-left: 10px;
+}
+
+.wavesurfer-handle:before,
+.wavesurfer-handle:after {
+  content: '';
+  display: block;
+  position: absolute;
+  z-index: 0;
+
+  border-top: 1px solid #95bf9b;
+  border-bottom: 1px solid #95bf9b;
+  height: 5px;
+  left: 5%;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.wavesurfer-handle:before {
+  margin-top: -2px;
+}
+region.wavesurfer-region::before {
+  content: attr(data-region-label);
+  position: absolute;
+  font-weight: bold;
+  color: #00ff00;
+  padding-left: 20%;
+  top: 0;
+}
+
+/* Labels */
+.labels-container {
+  position: relative;
+}
