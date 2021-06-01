@@ -13,8 +13,8 @@ import { ImVolumeDecrease, ImVolumeIncrease } from 'react-icons/im';
 
 const formWaveSurferOptions = (ref, reftl) => ({
   container: ref,
-  waveColor: '#4d4d4d',
-  progressColor: '#80b387',
+  waveColor: '#3e3e3e',
+  progressColor: '#95bf9b90',
   cursorColor: '#80b387',
   minPxPerSec: 30,
   scrollParent: true,

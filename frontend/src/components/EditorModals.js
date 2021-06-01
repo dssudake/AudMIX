@@ -5,7 +5,6 @@ import { Row, Col, Modal, ProgressBar, Spinner, Button } from 'react-bootstrap';
 
 import logo from '../assets/img/logo.png';
 import WaveAudioPlayer from '../components/WaveAudioPlayer';
-import WaveAudioPlayerCrop from './WaveAudioPlayer_Crop';
 
 const boxShadowStyle = {
   borderRadius: '10px',
@@ -118,62 +117,4 @@ CompareModal.propTypes = {
   handleClose: PropTypes.func,
   audData: PropTypes.object,
   handelSetData: PropTypes.func,
-};
-
-export function CropModal({ show, handleClose, audData, uuid }) {
-  const [url1, setUrl1] = useState(audData.audio);
-  const [name1, setName1] = useState('Original Audio');
-  const handleSetData1 = (url, name) => {
-    setUrl1(url);
-    setName1(name);
-  };
-  return (
-    <Modal
-      show={show}
-      onHide={handleClose}
-      backdrop="static"
-      className="text-primary"
-      size="xl"
-      centered
-      scrollable
-    >
-      <Modal.Header className="bg-dark text-secondary">
-        <img src={logo} width="150px" className="mr-5" />
-        <Modal.Title className="mx-auto">
-          <span className="mr-5" style={{ paddingRight: '150px' }}>
-            Crop Audios
-          </span>
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body className="p-4 bg-dark">
-        <Row>
-          <Col xs={12}>
-            {audData && (
-              <WaveAudioPlayerCrop
-                url={url1}
-                name={name1}
-                handelSetData={handleSetData1}
-                audData={audData}
-                up={false}
-                uuid={uuid}
-              />
-            )}
-          </Col>
-        </Row>
-      </Modal.Body>
-      <Modal.Footer className="bg-dark">
-        <Button variant="primary" onClick={handleClose}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-}
-
-CropModal.propTypes = {
-  show: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func,
-  audData: PropTypes.object,
-  handelSetData: PropTypes.func,
-  uuid: PropTypes.string,
 };

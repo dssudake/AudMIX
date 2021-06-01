@@ -6,7 +6,7 @@ import { Container, Row, Col, ButtonGroup, Button } from 'react-bootstrap';
 import NavBar from '../components/NavBar';
 import api from '../utils/api';
 import WaveAudioPlayerFL from '../components/WaveAudioPlayerFL';
-import { ProgressModal, CompareModal, CropModal } from '../components/EditorModals';
+import { ProgressModal, CompareModal } from '../components/EditorModals';
 
 const boxShadowStyle = {
   borderRadius: '10px',
@@ -43,12 +43,17 @@ export default function Editor() {
   const handelSetData = (url, name) => {
     setUrl(url);
     setName(name);
+    if (isCrop) {
+      audPlayerRef.current.handelRemoveRegions();
+      setIsCrop(false);
+    }
   };
 
   // Audio Denoising API call and display updated progress
   const [redNoiseModal, setredNoiseModal] = useState(false);
   const [percentage, setPercentage] = useState(0);
   const [modalHeader, setModalHeader] = useState('');
+  const [isCrop, setIsCrop] = useState(false);
   const handleAudioDenoise = () => {
     api
       .put(`process_audio/${id}/reduce_noise/`)
@@ -76,6 +81,24 @@ export default function Editor() {
       .catch((error) => console.log(error));
   };
 
+  // Crop Audio API call and display updated progress
+  const handelCropMerge = () => {
+    const data = audPlayerRef.current.handelGetSegements();
+    const uploadData = new FormData();
+    uploadData.append('name', name);
+    uploadData.append('Segments', data);
+    api
+      .put(`process_audio/${id}/crop_audio/`, uploadData, {})
+      .then((res) => {
+        if (res.status === 201) {
+          setModalHeader('Crop & Merge');
+          setredNoiseModal(true);
+          checkProcessStatus(res.data.task_id);
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   const checkProcessStatus = (task_id) => {
     api
       .get(`task_status/${task_id}/`)
@@ -96,13 +119,9 @@ export default function Editor() {
 
   // Comparison Modal state handeling
   const [showCompare, setShow] = useState(false);
-  const [showCrop, setShowCrop] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const handleCloseCrop = () => setShowCrop(false);
-  const handleShowCrop = () => setShowCrop(true);
 
   // Function to Downlaod processed audio
   const handeAudioDownload = () => {
@@ -148,6 +167,7 @@ export default function Editor() {
                         audData={audData}
                         url={url}
                         name={name}
+                        isCrop={isCrop}
                         handelSetData={handelSetData}
                       />
                     )}
@@ -163,25 +183,37 @@ export default function Editor() {
               <hr className="divider mt-4" />
               <ButtonGroup className="w-100">
                 <Button
-                  variant="outline-primary"
+                  variant={audData.denoised_audio ? 'primary' : 'outline-primary'}
                   onClick={handleAudioDenoise}
                   disabled={audData.denoised_audio !== null}
-                  className="mt-4"
                 >
                   Denoise Audio
                 </Button>
                 <Button
-                  variant="outline-secondary"
+                  variant={audData.vocals_audio ? 'secondary' : 'outline-secondary'}
                   onClick={handleAudioSeparate}
                   disabled={audData.vocals_audio !== null}
-                  className="mt-4"
                 >
                   Separate Audio
                 </Button>
               </ButtonGroup>
-              <Button className="mt-4" variant="outline-secondary" onClick={handleShowCrop} block>
-                Crop Audio
-              </Button>
+              <ButtonGroup className="w-100 mt-4">
+                <Button
+                  // variant={isCrop ? 'primary' : 'outline-primary'}
+                  className={!isCrop && 'bg-dark text-primary'}
+                  onClick={() => {
+                    isCrop
+                      ? audPlayerRef.current.handelRemoveRegions()
+                      : audPlayerRef.current.handelAddRegion();
+                    setIsCrop(!isCrop);
+                  }}
+                >
+                  Crop Audio
+                </Button>
+                <Button variant="outline-secondary" onClick={handelCropMerge} disabled={!isCrop}>
+                  Merge Segment
+                </Button>
+              </ButtonGroup>
               <hr className="divider mt-4" />
               <Button
                 variant="outline-secondary"
@@ -211,13 +243,6 @@ export default function Editor() {
               handleClose={handleClose}
               audData={audData}
               handelSetData={handelSetData}
-            />
-            <CropModal
-              show={showCrop}
-              handleClose={handleCloseCrop}
-              audData={audData}
-              handelSetData={handelSetData}
-              uuid={String(id)}
             />
           </>
         )}

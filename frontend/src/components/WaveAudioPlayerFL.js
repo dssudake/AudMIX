@@ -7,6 +7,7 @@ import WaveSurfer from 'wavesurfer.js';
 import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.min.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
 import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.js';
+import RegionsPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.regions.js';
 
 import {
   BsPlayFill,
@@ -26,8 +27,8 @@ import { ImVolumeDecrease, ImVolumeIncrease } from 'react-icons/im';
 
 const formWaveSurferOptions = (ref, reftl) => ({
   container: ref,
-  waveColor: '#4d4d4d',
-  progressColor: '#80b387',
+  waveColor: '#3e3e3e',
+  progressColor: '#95bf9b90',
   cursorColor: '#80b387',
   minPxPerSec: 30,
   scrollParent: true,
@@ -64,11 +65,15 @@ const formWaveSurferOptions = (ref, reftl) => ({
     MinimapPlugin.create({
       height: 50,
     }),
+    RegionsPlugin.create({
+      dragSelection: false,
+      maxRegions: 3,
+    }),
   ],
 });
 
 // eslint-disable-next-line react/prop-types
-function WaveAudioPlayerFL({ audData, url, name, handelSetData }, ref) {
+function WaveAudioPlayerFL({ audData, url, name, handelSetData, isCrop }, ref) {
   const waveformRef = useRef(null);
   const timelineRef = useRef(null);
   const wavesurfer = useRef(null);
@@ -79,6 +84,71 @@ function WaveAudioPlayerFL({ audData, url, name, handelSetData }, ref) {
   const [playBack, setPlayBack] = useState(1);
   const [currentTime, setCurrentTime] = useState('0:00');
   const [totalTime, setTotalTime] = useState('0:00');
+
+  const [number, setNumber] = useState(0);
+  const [segments, setSegments] = useState([
+    [0, 0],
+    [0, 0],
+    [0, 0],
+  ]);
+
+  const setRegionOptions = (no, start, end) => ({
+    id: no,
+    start: start,
+    end: end,
+    loop: true,
+    drag: true,
+    color: '#e6e08633',
+    resize: true,
+    preventContextMenu: true,
+    showTooltip: false,
+    attributes: {
+      label: 'Segment No : ' + no,
+    },
+  });
+
+  var updateLabel = function (region) {
+    var segmentsData = segments;
+    segmentsData[Number(region.id) - 1] = [region.start, region.end];
+    setSegments(segmentsData);
+  };
+
+  const setNumberRegion = (no) => {
+    var segmentsData = segments;
+    wavesurfer.current.clearRegions();
+    var waveTime = wavesurfer.current.getDuration().toFixed(0);
+    switch (no) {
+      case 1:
+        setNumber(1);
+        wavesurfer.current.addRegion(setRegionOptions('1', waveTime / 10, 2 * (waveTime / 10)));
+        segmentsData[1] = [0, 0];
+        segmentsData[2] = [0, 0];
+        break;
+
+      case 2:
+        setNumber(2);
+        wavesurfer.current.addRegion(setRegionOptions('1', waveTime / 10, 2 * (waveTime / 10)));
+        wavesurfer.current.addRegion(
+          setRegionOptions('2', 3 * (waveTime / 10), 4 * (waveTime / 10))
+        );
+        segmentsData[2] = [0, 0];
+        break;
+
+      case 3:
+        setNumber(3);
+        wavesurfer.current.addRegion(
+          setRegionOptions('1', 1 * (waveTime / 10), 2 * (waveTime / 10))
+        );
+        wavesurfer.current.addRegion(
+          setRegionOptions('2', 3 * (waveTime / 10), 4 * (waveTime / 10))
+        );
+        wavesurfer.current.addRegion(
+          setRegionOptions('3', 5 * (waveTime / 10), 6 * (waveTime / 10))
+        );
+        break;
+    }
+    setSegments(segmentsData);
+  };
 
   useImperativeHandle(
     ref,
@@ -99,6 +169,21 @@ function WaveAudioPlayerFL({ audData, url, name, handelSetData }, ref) {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+      },
+      handelRemoveRegions() {
+        wavesurfer.current.clearRegions();
+        setNumber(0);
+        setSegments([
+          [0, 0],
+          [0, 0],
+          [0, 0],
+        ]);
+      },
+      handelAddRegion() {
+        setNumberRegion(1);
+      },
+      handelGetSegements() {
+        return segments;
       },
     }),
     []
@@ -148,6 +233,8 @@ function WaveAudioPlayerFL({ audData, url, name, handelSetData }, ref) {
       setPlay(false);
     });
 
+    wavesurfer.current.on('region-created', updateLabel);
+    wavesurfer.current.on('region-updated', updateLabel);
     // Removes events, elements and disconnects Web Audio nodes.
     // when component unmount
     return () => wavesurfer.current.destroy();
@@ -302,6 +389,41 @@ function WaveAudioPlayerFL({ audData, url, name, handelSetData }, ref) {
           </Card.Header>
 
           <Card.Body className="text-muted">
+            {isCrop && (
+              <Row className="justify-content-between mb-3">
+                <Col xs={8}>Crop Segments</Col>
+                <Col xs={4} className="text-right">
+                  <Dropdown>
+                    <Dropdown.Toggle size="sm" className="w-10" variant="outline-secondary">
+                      No of Segments : {number}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        onClick={() => setNumberRegion(1)}
+                        className={number === 1 ? 'active' : ''}
+                      >
+                        1
+                      </Dropdown.Item>
+
+                      <Dropdown.Item
+                        onClick={() => setNumberRegion(2)}
+                        className={number === 2 ? 'active' : ''}
+                      >
+                        2
+                      </Dropdown.Item>
+
+                      <Dropdown.Item
+                        onClick={() => setNumberRegion(3)}
+                        className={number === 3 ? 'active' : ''}
+                      >
+                        3
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+              </Row>
+            )}
+
             <Row className="justify-content-between">
               <Col>Volume</Col>
               <Col>
@@ -384,5 +506,6 @@ WaveAudioPlayerFL.propTypes = {
   audData: PropTypes.object,
   url: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  isCrop: PropTypes.boolean,
   handelSetData: PropTypes.func,
 };
