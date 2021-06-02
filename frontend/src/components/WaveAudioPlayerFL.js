@@ -30,7 +30,7 @@ const formWaveSurferOptions = (ref, reftl) => ({
   waveColor: '#3e3e3e',
   progressColor: '#95bf9b90',
   cursorColor: '#80b387',
-  minPxPerSec: 30,
+  minPxPerSec: 5,
   scrollParent: true,
   // autoCenter: true,
   // autoCenterImmediately: false,

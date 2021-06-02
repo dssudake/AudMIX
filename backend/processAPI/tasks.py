@@ -143,7 +143,7 @@ def crop_and_merge(self, pk, name, segments):
             os.makedirs(output_folder)
 
         # Delete Previous Files
-        delete = os.path.join(output_folder, '*')
+        delete = os.path.join(output_folder, '*.mp3')
         print('delete : ', delete)
         files = glob.glob(delete)
         for f in files:
@@ -166,32 +166,43 @@ def crop_and_merge(self, pk, name, segments):
                     + ' -ss '+str(start) + ' -to '+str(end)+' '+output
                 )
                 locations.append(output)
-
         # Merge the Cropped Segments
+        # make output folder
+        merged_folder = os.path.join(output_folder, 'output')
+        if not os.path.exists(merged_folder):
+            os.makedirs(merged_folder)
         merged_file_name = output_folder_name+'_Merged_Segments.mp3'
-        output = os.path.join(output_folder, merged_file_name)
+        output = os.path.join(merged_folder, merged_file_name)
+
+        text_file_path = os.path.join(output_folder, 'input.txt')
+        txt = open(text_file_path, 'w')
+        txt.write("# this is a comment")
         if(n == 1):
-            os.system('ffmpeg -i '+locations[0]+' '+output)
+            txt.write("\nfile '"+str(locations[0])+"'")
         elif(n == 2):
-            os.system('ffmpeg -i "concat:' +
-                      locations[0]+'|'+locations[1]+'" -acodec copy '+output)
+            txt.write(
+                "\nfile '"+str(locations[0])+"'"+"\nfile '"+str(locations[1])+"'")
         elif(n == 3):
-            os.system('ffmpeg -i "concat:' +
-                      locations[0]+'|'+locations[1]+'|'+locations[2]+'" -acodec copy '+output)
+            txt.write("\nfile '"+str(locations[0])+"'"+"\nfile '"+str(
+                locations[1])+"'"+"\nfile '"+str(locations[2])+"'")
+        txt.close()
+
+        os.system('ffmpeg -y -f concat -safe 0 -i ' +
+                  text_file_path+' -c copy '+output)
 
         # Overwrite Merged Audio
         if(name == 'Original Audio'):
             audio_file.audio = os.path.join(
-                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, merged_file_name)
+                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, 'output', merged_file_name)
         elif(name == 'Denoised Audio'):
             audio_file.denoised_audio = os.path.join(
-                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, merged_file_name)
+                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, 'output', merged_file_name)
         elif(name == 'Vocals Only'):
             audio_file.vocals_audio = os.path.join(
-                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, merged_file_name)
+                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, 'output', merged_file_name)
         elif(name == 'Music only'):
             audio_file.music_audio = os.path.join(
-                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, merged_file_name)
+                settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, 'output', merged_file_name)
         audio_file.save()
         return 'AUDIO_CROPPED_AND_MERGED'
 
