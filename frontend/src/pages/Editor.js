@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
-import { Container, Row, Col, ButtonGroup, Button } from 'react-bootstrap';
+import { Container, Row, Col, ButtonGroup, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 import NavBar from '../components/NavBar';
 import api from '../utils/api';
@@ -211,23 +211,57 @@ export default function Editor() {
                 Compare Original {'&'} Processed Audio
               </Button>
               <hr className="divider mt-4" />
-              <ButtonGroup className="w-100">
-                <Button
-                  variant={audData.denoised_audio ? 'primary' : 'outline-primary'}
-                  onClick={handleAudioDenoise}
-                  disabled={audData.denoised_audio !== null}
+
+              <ButtonGroup className="w-100 mt-2">
+                <OverlayTrigger
+                  key="bottom"
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="tooltip-disabled" className="secondary">
+                      {audData.denoised_audio === null
+                        ? 'Use this to remove background noise from audio & get clean audio.'
+                        : 'Already Processed'}
+                    </Tooltip>
+                  }
                 >
-                  Denoise Audio
-                </Button>
-                <Button
-                  variant={audData.vocals_audio ? 'secondary' : 'outline-secondary'}
-                  onClick={handleAudioSeparate}
-                  disabled={audData.vocals_audio !== null}
+                  <span className="w-50">
+                    <Button
+                      className="w-100"
+                      variant={audData.denoised_audio ? 'primary' : 'outline-primary'}
+                      onClick={handleAudioDenoise}
+                      disabled={audData.denoised_audio !== null}
+                      style={audData.denoised_audio === null ? {} : { pointerEvents: 'none' }}
+                    >
+                      Denoise Audio
+                    </Button>
+                  </span>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  key="bottom"
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="tooltip-disabled" className="primary">
+                      {audData.vocals_audio === null
+                        ? 'Use this to separate a Music file into Vocals and Instrumentals.'
+                        : 'Already Processed'}
+                    </Tooltip>
+                  }
                 >
-                  Separate Audio
-                </Button>
+                  <span className="w-50">
+                    <Button
+                      className="w-100"
+                      variant={audData.vocals_audio ? 'secondary' : 'outline-secondary'}
+                      onClick={handleAudioSeparate}
+                      disabled={audData.vocals_audio !== null}
+                      style={audData.vocals_audio === null ? {} : { pointerEvents: 'none' }}
+                    >
+                      Separate Audio
+                    </Button>
+                  </span>
+                </OverlayTrigger>
               </ButtonGroup>
-              <ButtonGroup className="w-100 mt-4">
+              <hr className="divider mt-4" />
+              <ButtonGroup className="w-100 mt-2">
                 <Button
                   variant={isCrop ? 'secondary' : 'outline-secondary'}
                   className={!isCrop && 'bg-dark text-secondary'}
@@ -241,7 +275,7 @@ export default function Editor() {
                   Set Crop Intervals
                 </Button>
                 <Button variant="outline-primary" onClick={handelCropMerge} disabled={!isCrop}>
-                  Crop {'&'} Merge Segment
+                  Crop {'&'} Merge Segment(s)
                 </Button>
               </ButtonGroup>
               <Button

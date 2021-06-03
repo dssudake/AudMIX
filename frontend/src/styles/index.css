@@ -194,3 +194,46 @@ region.wavesurfer-region::before {
 .labels-container {
   position: relative;
 }
+
+/* --------- ToolTip Styles --------- */
+/* Primary */
+.primary > .tooltip-inner {
+  background-color: #0e0e0e;
+  color: #95bf9b;
+  border: 1px solid #95bf9b;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+/* Secondary */
+.secondary > .tooltip-inner {
+  background-color: #0e0e0e;
+  color: #a39f60;
+  border: 1px solid #a39f60;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+/* Tool Tip Arrow Style */
+.secondary.tooltip::after {
+  position: absolute;
+  left: 45%;
+  top: 2%;
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-top: 9px solid #a39f60;
+  border-right: 9px solid #0e0e0e00;
+  transform: rotate(45deg);
+}
+.primary.tooltip::after {
+  position: absolute;
+  left: 45%;
+  top: 2%;
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-top: 9px solid #95bf9b;
+  border-right: 9px solid #0e0e0e00;
+  transform: rotate(45deg);
+}
