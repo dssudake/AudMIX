@@ -73,14 +73,14 @@ const formWaveSurferOptions = (ref, reftl) => ({
 });
 
 // eslint-disable-next-line react/prop-types
-function WaveAudioPlayerFL({ audData, url, name, handelSetData, isCrop }, ref) {
+function WaveAudioPlayerFL({ audData, url, name, handelSetData, isCrop, reset }, ref) {
   const waveformRef = useRef(null);
   const timelineRef = useRef(null);
   const wavesurfer = useRef(null);
   const [playing, setPlay] = useState(false);
   const [isMute, setIsMute] = useState(false);
   const [volume, setVolume] = useState(0.5);
-  const [zoom, setZoom] = useState(30);
+  const [zoom, setZoom] = useState(5);
   const [playBack, setPlayBack] = useState(1);
   const [currentTime, setCurrentTime] = useState('0:00');
   const [totalTime, setTotalTime] = useState('0:00');
@@ -112,6 +112,7 @@ function WaveAudioPlayerFL({ audData, url, name, handelSetData, isCrop }, ref) {
     segmentsData[Number(region.id) - 1] = [region.start, region.end];
     setSegments(segmentsData);
   };
+  // reset(false);
 
   const setNumberRegion = (no) => {
     var segmentsData = segments;
@@ -237,6 +238,14 @@ function WaveAudioPlayerFL({ audData, url, name, handelSetData, isCrop }, ref) {
     wavesurfer.current.on('region-updated', updateLabel);
     // Removes events, elements and disconnects Web Audio nodes.
     // when component unmount
+    if (
+      url.includes('audio.mp3') ||
+      url.includes('audio_processed_denoised.wav') ||
+      url.includes('vocals.mp3') ||
+      url.includes('accompaniment.mp3')
+    )
+      reset(true);
+    else reset(false);
     return () => wavesurfer.current.destroy();
   }, [url]);
 
@@ -391,11 +400,11 @@ function WaveAudioPlayerFL({ audData, url, name, handelSetData, isCrop }, ref) {
           <Card.Body className="text-muted">
             {isCrop && (
               <Row className="justify-content-between mb-3">
-                <Col xs={8}>Crop Segments</Col>
+                <Col xs={8}>Crop Intervals</Col>
                 <Col xs={4} className="text-right">
                   <Dropdown>
                     <Dropdown.Toggle size="sm" className="w-10" variant="outline-secondary">
-                      No of Segments : {number}
+                      No of Intervals : {number}
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item
@@ -508,4 +517,5 @@ WaveAudioPlayerFL.propTypes = {
   name: PropTypes.string.isRequired,
   isCrop: PropTypes.boolean,
   handelSetData: PropTypes.func,
+  reset: PropTypes.func,
 };

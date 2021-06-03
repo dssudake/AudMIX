@@ -1,5 +1,5 @@
 import os
-import time
+import uuid
 import glob
 import numpy as np
 from celery import shared_task
@@ -115,6 +115,9 @@ def seperate_audio(self, audio_id):
 @shared_task(bind=True)
 def crop_and_merge(self, pk, name, segments):
     try:
+        progress_recorder = ProgressRecorder(self)
+        progress_recorder.set_progress(5, 100)
+        id = uuid.uuid4()
         segments = segments.split(',')
         segments = [float(i) for i in segments]
         segments = np.reshape(segments, (3, 2))
@@ -130,14 +133,14 @@ def crop_and_merge(self, pk, name, segments):
         elif(name == 'Music only'):
             audio_file_path = audio_file.music_audio.path
             output_folder_name = 'Music_Only'
-
+        progress_recorder.set_progress(25, 100)
         # audio_file_path = audio_file.audio.path
         folder_path = os.path.join(
             settings.MEDIA_ROOT, settings.AUDIO_PROCESSING_ROOT, pk)
         os.chdir(folder_path)
         output_folder = os.path.join(
             folder_path, 'Cropped_Files', output_folder_name)
-
+        progress_recorder.set_progress(55, 100)
         # Create folder if not exist
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
@@ -148,7 +151,7 @@ def crop_and_merge(self, pk, name, segments):
         files = glob.glob(delete)
         for f in files:
             os.remove(f)
-
+        progress_recorder.set_progress(65, 100)
         # Crop and add new segment files
         n = 0
         locations = []
@@ -168,10 +171,12 @@ def crop_and_merge(self, pk, name, segments):
                 locations.append(output)
         # Merge the Cropped Segments
         # make output folder
+        progress_recorder.set_progress(85, 100)
         merged_folder = os.path.join(output_folder, 'output')
         if not os.path.exists(merged_folder):
             os.makedirs(merged_folder)
-        merged_file_name = output_folder_name+'_Merged_Segments.mp3'
+        merged_file_name = output_folder_name + \
+            '_Merged_Segments'+str(id.hex)+'.mp3'
         output = os.path.join(merged_folder, merged_file_name)
 
         text_file_path = os.path.join(output_folder, 'input.txt')
@@ -203,7 +208,13 @@ def crop_and_merge(self, pk, name, segments):
         elif(name == 'Music only'):
             audio_file.music_audio = os.path.join(
                 settings.AUDIO_PROCESSING_ROOT, pk, 'Cropped_Files', output_folder_name, 'output', merged_file_name)
+
+        if(audio_file_path.count('audio.mp3') > 0 or audio_file_path.count('audio_processed_denoised.wav') > 0 or audio_file_path.count('vocals.mp3') > 0 or audio_file_path.count('accompaniment.mp3') > 0):
+            print("Not Removed")
+        else:
+            os.remove(audio_file_path)
         audio_file.save()
+        progress_recorder.set_progress(100, 100)
         return 'AUDIO_CROPPED_AND_MERGED'
 
     except FileNotFoundError:

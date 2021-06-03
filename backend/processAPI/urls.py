@@ -14,4 +14,6 @@ urlpatterns = [
          name='audio-seperate-audio'),
     path('process_audio/<uuid:pk>/crop_audio/', views.AudioCrop.as_view(),
          name='audio-crop-segments'),
+    path('process_audio/<uuid:pk>/reset_waveform/', views.AudioReset.as_view(),
+         name='audio-reset-segments'),
 ]

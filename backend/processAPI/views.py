@@ -1,9 +1,11 @@
+import os
 from django.http import Http404
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
+from django.conf import settings
 
 from processAPI.models import AudioFile
 from processAPI.serializers import AudioFileSerializer
@@ -104,3 +106,30 @@ class AudioCrop(APIView):
             'audio_id': pk
         }
         return Response(res_dict, status=status.HTTP_201_CREATED)
+
+
+class AudioReset(APIView):
+    """
+    Seperate vocals and music from songs
+    - Assign celery task to Seperate Audio
+    - Return celery task_id in response
+    """
+
+    def put(self, request, pk):
+        name = request.data['name']
+        audio_file = AudioFile.objects.get(pk=pk)
+        print(name)
+        if(name == 'Original Audio'):
+            audio_file.audio = os.path.join(
+                settings.AUDIO_PROCESSING_ROOT, str(pk), 'audio.mp3')
+        elif(name == 'Denoised Audio'):
+            audio_file.denoised_audio = os.path.join(
+                settings.AUDIO_PROCESSING_ROOT, str(pk), 'audio_processed_denoised.wav')
+        elif(name == 'Vocals Only'):
+            audio_file.vocals_audio = os.path.join(
+                settings.AUDIO_PROCESSING_ROOT, str(pk), 'seperated_output', 'audio', 'vocals.mp3')
+        elif(name == 'Music only'):
+            audio_file.music_audio = os.path.join(
+                settings.AUDIO_PROCESSING_ROOT, str(pk), 'seperated_output', 'audio', 'accompaniment.mp3')
+        audio_file.save()
+        return Response('OK', status=status.HTTP_201_CREATED)

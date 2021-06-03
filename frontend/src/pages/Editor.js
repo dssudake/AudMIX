@@ -17,21 +17,41 @@ const boxShadowStyle = {
 export default function Editor() {
   const { id } = useParams();
   const audPlayerRef = useRef(null);
-
+  const [audData, setAudData] = useState(null);
+  const [reset, setReset] = useState(true);
   useEffect(() => {
     document.title = 'Editor  | AudMIX - Process Your Audio on Cloud';
-    fetchData();
+    fetchData('initial');
   }, []);
 
   // Fetch Audio Details for given id in Url
-  const [audData, setAudData] = useState(null);
-  const fetchData = () => {
+
+  const fetchData = (source) => {
+    setIsCrop(false);
     api
       .get(`process_audio/${id}/`)
       .then((res) => {
         res.status === 200 && setAudData(res.data);
-        setUrl(res.data.audio);
-        setName('Original Audio');
+        if (source === 'initial') {
+          setUrl(res.data.audio);
+          setName('Original Audio');
+        } else if (source === 'refresh') {
+          setUrl(res.data.audio);
+          switch (name) {
+            case 'Original Audio':
+              setUrl(res.data.audio);
+              break;
+            case 'Denoised Audio':
+              setUrl(res.data.denoised_audio);
+              break;
+            case 'Vocals Only':
+              setUrl(res.data.vocals_audio);
+              break;
+            case 'Music only':
+              setUrl(res.data.music_audio);
+              break;
+          }
+        }
       })
       .catch((error) => console.log(error));
   };
@@ -43,10 +63,7 @@ export default function Editor() {
   const handelSetData = (url, name) => {
     setUrl(url);
     setName(name);
-    if (isCrop) {
-      audPlayerRef.current.handelRemoveRegions();
-      setIsCrop(false);
-    }
+    setIsCrop(false);
   };
 
   // Audio Denoising API call and display updated progress
@@ -84,6 +101,7 @@ export default function Editor() {
   // Crop Audio API call and display updated progress
   const handelCropMerge = () => {
     const data = audPlayerRef.current.handelGetSegements();
+    console.log(data);
     const uploadData = new FormData();
     uploadData.append('name', name);
     uploadData.append('Segments', data);
@@ -98,7 +116,18 @@ export default function Editor() {
       })
       .catch((error) => console.log(error));
   };
-
+  const handleReset = () => {
+    const uploadData = new FormData();
+    uploadData.append('name', name);
+    api
+      .put(`process_audio/${id}/reset_waveform/`, uploadData, {})
+      .then((res) => {
+        if (res.status === 201) {
+          fetchData('refresh');
+        }
+      })
+      .catch((error) => console.log(error));
+  };
   const checkProcessStatus = (task_id) => {
     api
       .get(`task_status/${task_id}/`)
@@ -110,7 +139,7 @@ export default function Editor() {
           setPercentage(100);
           setTimeout(function () {
             setredNoiseModal(false);
-            fetchData();
+            fetchData('refresh');
           }, 2000);
         }
       })
@@ -169,6 +198,7 @@ export default function Editor() {
                         name={name}
                         isCrop={isCrop}
                         handelSetData={handelSetData}
+                        reset={setReset}
                       />
                     )}
                   </Col>
@@ -199,8 +229,8 @@ export default function Editor() {
               </ButtonGroup>
               <ButtonGroup className="w-100 mt-4">
                 <Button
-                  // variant={isCrop ? 'primary' : 'outline-primary'}
-                  className={!isCrop && 'bg-dark text-primary'}
+                  variant={isCrop ? 'secondary' : 'outline-secondary'}
+                  className={!isCrop && 'bg-dark text-secondary'}
                   onClick={() => {
                     isCrop
                       ? audPlayerRef.current.handelRemoveRegions()
@@ -208,12 +238,20 @@ export default function Editor() {
                     setIsCrop(!isCrop);
                   }}
                 >
-                  Crop Audio
+                  Set Crop Intervals
                 </Button>
-                <Button variant="outline-secondary" onClick={handelCropMerge} disabled={!isCrop}>
-                  Merge Segment
+                <Button variant="outline-primary" onClick={handelCropMerge} disabled={!isCrop}>
+                  Crop {'&'} Merge Segment
                 </Button>
               </ButtonGroup>
+              <Button
+                variant="outline-danger"
+                className="w-100 mt-4"
+                disabled={reset}
+                onClick={handleReset}
+              >
+                Start Over
+              </Button>
               <hr className="divider mt-4" />
               <Button
                 variant="outline-secondary"
