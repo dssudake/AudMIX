@@ -220,10 +220,10 @@ region.wavesurfer-region::before {
   left: 45%;
   top: 2%;
   content: '';
-  width: 9px;
-  height: 9px;
-  border-top: 9px solid #a39f60;
-  border-right: 9px solid #0e0e0e00;
+  width: 10px;
+  height: 10px;
+  border-top: 10px solid #a39f60;
+  border-right: 10px solid #0e0e0e00;
   transform: rotate(45deg);
 }
 .primary.tooltip::after {
@@ -231,9 +231,9 @@ region.wavesurfer-region::before {
   left: 45%;
   top: 2%;
   content: '';
-  width: 9px;
-  height: 9px;
-  border-top: 9px solid #95bf9b;
-  border-right: 9px solid #0e0e0e00;
+  width: 10px;
+  height: 10px;
+  border-top: 10px solid #95bf9b;
+  border-right: 10px solid #0e0e0e00;
   transform: rotate(45deg);
 }

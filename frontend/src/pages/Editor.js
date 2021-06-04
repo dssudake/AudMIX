@@ -59,6 +59,7 @@ export default function Editor() {
   // Waveaudioplayer parameters
   const [url, setUrl] = useState('');
   const [name, setName] = useState('');
+  const [hide, sethide] = useState(true);
 
   const handelSetData = (url, name) => {
     setUrl(url);
@@ -199,6 +200,8 @@ export default function Editor() {
                         isCrop={isCrop}
                         handelSetData={handelSetData}
                         reset={setReset}
+                        hide={hide}
+                        sethidebutton={sethide}
                       />
                     )}
                   </Col>
@@ -214,7 +217,6 @@ export default function Editor() {
 
               <ButtonGroup className="w-100 mt-2">
                 <OverlayTrigger
-                  key="bottom"
                   placement="bottom"
                   overlay={
                     <Tooltip id="tooltip-disabled" className="secondary">
@@ -237,7 +239,6 @@ export default function Editor() {
                   </span>
                 </OverlayTrigger>
                 <OverlayTrigger
-                  key="bottom"
                   placement="bottom"
                   overlay={
                     <Tooltip id="tooltip-disabled" className="primary">
@@ -270,6 +271,7 @@ export default function Editor() {
                       ? audPlayerRef.current.handelRemoveRegions()
                       : audPlayerRef.current.handelAddRegion();
                     setIsCrop(!isCrop);
+                    sethide(true);
                   }}
                 >
                   Set Crop Intervals
