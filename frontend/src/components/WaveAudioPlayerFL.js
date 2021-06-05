@@ -88,7 +88,9 @@ function WaveAudioPlayerFL(
   const [playBack, setPlayBack] = useState(1);
   const [currentTime, setCurrentTime] = useState('0:00');
   const [totalTime, setTotalTime] = useState('0:00');
-
+  const [button2, setButton2] = useState(false);
+  const [button3, setButton3] = useState(false);
+  const [button4, setButton4] = useState(false);
   const [number, setNumber] = useState(0);
   const [segments, setSegments] = useState([
     [0, 0],
@@ -120,6 +122,7 @@ function WaveAudioPlayerFL(
 
   const setNumberRegion = (no) => {
     var segmentsData = segments;
+    console.log(hide);
     wavesurfer.current.clearRegions();
     var waveTime = wavesurfer.current.getDuration().toFixed(0);
     switch (no) {
@@ -128,10 +131,16 @@ function WaveAudioPlayerFL(
         wavesurfer.current.addRegion(setRegionOptions('1', waveTime / 10, 2 * (waveTime / 10)));
         segmentsData[1] = [0, 0];
         segmentsData[2] = [0, 0];
+        setButton2(false);
+        setButton3(false);
+        setButton4(false);
         break;
 
       case 2:
         setNumber(2);
+        setButton2(true);
+        setButton3(false);
+        setButton4(true);
         sethidebutton(false);
         wavesurfer.current.addRegion(setRegionOptions('1', waveTime / 10, 2 * (waveTime / 10)));
         wavesurfer.current.addRegion(
@@ -143,6 +152,9 @@ function WaveAudioPlayerFL(
       case 3:
         setNumber(3);
         sethidebutton(false);
+        setButton2(true);
+        setButton3(true);
+        setButton4(true);
         wavesurfer.current.addRegion(
           setRegionOptions('1', 1 * (waveTime / 10), 2 * (waveTime / 10))
         );
@@ -303,8 +315,32 @@ function WaveAudioPlayerFL(
     wavesurfer.current.setPlaybackRate(Number(e.target.value));
     setPlayBack(e.target.value);
   };
+
   const play = (no) => {
+    setPlay(true);
+    // if (no === 4) {
+    //   const waveSurfer = wavesurfer.current;
+    //   console.log(waveSurfer.regions.list);
+    //   const playlist = Object.values(waveSurfer.regions.list);
+
+    //   let curr = playlist.shift();
+    //   // console.log(curr);
+    //   waveSurfer.on('audioprocess', (time) => {
+    //     console.log(curr.end);
+    //     if (time > curr.end && playlist.length > 0) {
+    //       curr = playlist.shift();
+    //       curr.play();
+    //       // time = curr.end;
+    //     } else if (time > curr.end && playlist.length === 0) {
+    //       console.log('stopped');
+    //       // waveSurfer.stop();
+    //     }
+    //   });
+
+    //   waveSurfer.play(curr.start);
+    // } else {
     wavesurfer.current.regions.list[String(no)].play();
+    // }
   };
 
   return (
@@ -413,132 +449,75 @@ function WaveAudioPlayerFL(
           <Card.Body className="text-muted">
             {isCrop && (
               <Row className="justify-content-between mb-3">
-                <Col xs={2}>Crop Intervals</Col>
+                <Col xs={1}>Crop</Col>
 
-                <Col xs={7}>
-                  {number === 1 ? (
-                    <ButtonGroup style={{ width: '100%' }}>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={true}
+                <Col xs={6}>
+                  <ButtonGroup style={{ fontSize: '80%', width: '100%' }}>
+                    <Animated
+                      animationIn="zoomIn"
+                      animationOut="zoomOut"
+                      animationInDuration={500}
+                      animationOutDuration={500}
+                      isVisible={true}
+                    >
+                      <Button className="w-100" variant="outline-primary" onClick={() => play(1)}>
+                        Play Segment 1
+                      </Button>
+                    </Animated>
+                    <Animated
+                      animationIn="zoomIn"
+                      animationOut="zoomOut"
+                      animationInDuration={500}
+                      animationOutDuration={500}
+                      isVisible={button2}
+                    >
+                      <Button
+                        variant="outline-secondary"
+                        onClick={() => play(2)}
+                        hidden={isCrop && hide}
                       >
-                        <Button variant="outline-primary" onClick={() => play(1)}>
-                          Play Segment 1
-                        </Button>
-                      </Animated>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={false}
+                        Play Segment 2
+                      </Button>
+                    </Animated>
+                    <Animated
+                      animationIn="zoomIn"
+                      animationOut="zoomOut"
+                      animationInDuration={500}
+                      animationOutDuration={500}
+                      isVisible={button3}
+                    >
+                      <Button
+                        variant="outline-primary"
+                        onClick={() => play(3)}
+                        hidden={isCrop && hide}
                       >
-                        <Button
-                          variant="outline-secondary"
-                          onClick={() => play(2)}
-                          hidden={isCrop && hide}
-                        >
-                          Play Segment 2
-                        </Button>
-                      </Animated>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={false}
-                      >
-                        <Button
-                          variant="outline-secondary"
-                          onClick={() => play(3)}
-                          hidden={isCrop && hide}
-                        >
-                          Play Segment 3
-                        </Button>
-                      </Animated>
-                    </ButtonGroup>
-                  ) : number === 2 ? (
-                    <ButtonGroup style={{ width: '100%' }}>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={true}
-                      >
-                        <Button variant="outline-primary" onClick={() => play(1)}>
-                          Play Segment 1
-                        </Button>
-                      </Animated>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={true}
-                      >
-                        <Button variant="outline-secondary" onClick={() => play(2)}>
-                          Play Segment 2
-                        </Button>
-                      </Animated>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={false}
-                      >
-                        <Button variant="outline-primary" onClick={() => play(3)}>
-                          Play Segment 3
-                        </Button>
-                      </Animated>
-                    </ButtonGroup>
-                  ) : (
-                    <ButtonGroup style={{ width: '100%' }}>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={true}
-                      >
-                        <Button variant="outline-primary" onClick={() => play(1)}>
-                          Play Segment 1
-                        </Button>
-                      </Animated>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={true}
-                      >
-                        <Button variant="outline-secondary" onClick={() => play(2)}>
-                          Play Segment 2
-                        </Button>
-                      </Animated>
-                      <Animated
-                        animationIn="zoomIn"
-                        animationOut="zoomOut"
-                        animationInDuration={500}
-                        animationOutDuration={500}
-                        isVisible={true}
-                      >
-                        <Button variant="outline-primary" onClick={() => play(3)}>
-                          Play Segment 3
-                        </Button>
-                      </Animated>
-                    </ButtonGroup>
-                  )}
+                        Play Segment 3
+                      </Button>
+                    </Animated>
+                  </ButtonGroup>
+                </Col>
+                <Col xs={2}>
+                  <Animated
+                    animationIn="zoomIn"
+                    animationOut="zoomOut"
+                    animationInDuration={500}
+                    animationOutDuration={500}
+                    isVisible={button4}
+                  >
+                    <Button
+                      variant="outline-primary"
+                      hidden={isCrop && hide}
+                      // onClick={() => play(4)}
+                    >
+                      Play All
+                    </Button>
+                  </Animated>
                 </Col>
 
-                <Col xs={3} className="text-right">
+                <Col xs="auto" className="text-left ">
                   <Dropdown>
                     <Dropdown.Toggle className="w-10" variant="outline-secondary">
-                      No of Intervals : {number}
+                      Segments : {number}
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item
