@@ -39,6 +39,7 @@ export default function Upload() {
 
   const handelUpload = () => {
     var fileName = namer(File.name);
+    fileName = File.name;
     const uploadData = new FormData();
     uploadData.append('name', fileName);
     uploadData.append('audio', File);
