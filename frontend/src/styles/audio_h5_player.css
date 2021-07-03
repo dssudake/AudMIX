@@ -1,0 +1,22 @@
+/* --------- react-h5-audio-player styles ---------  */
+.rhap_container,
+.rhap_container *:focus {
+  outline: none;
+}
+
+.rhap_container {
+  background-color: #0e0e0e;
+}
+
+.rhap_container svg {
+  color: #95bf9b;
+}
+
+.rhap_time {
+  color: #95bf9b;
+}
+
+.rhap_progress-filled,
+.rhap_progress-indicator {
+  background: #95bf9b;
+}

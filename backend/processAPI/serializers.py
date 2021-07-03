@@ -7,6 +7,6 @@ class AudioFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AudioFile
         fields = ['id', 'modified_at', 'created_at',
-                  'name', 'audio', 'processed_audio']
+                  'name', 'audio', 'processed_audio', 'denoised_audio', 'vocals_audio', 'music_audio']
         read_only_fields = ['id', 'created_at',
-                            'modified_at', 'processed_audio']
+                            'modified_at', 'processed_audio', 'denoised_audio', 'vocals_audio', 'music_audio']

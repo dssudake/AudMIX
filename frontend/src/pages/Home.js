@@ -6,7 +6,7 @@ import { BsCloudUpload, BsCloudDownload } from 'react-icons/bs';
 import { SiAudiomack } from 'react-icons/si';
 import { FiFastForward } from 'react-icons/fi';
 
-import logo from '../assets/img/logo.png';
+import NavBar from '../components/NavBar';
 import banner from '../assets/img/banner.png';
 
 export default function Home() {
@@ -15,12 +15,10 @@ export default function Home() {
   });
 
   return (
-    <Container fluid="xl" className="pt-4">
-      <Row className="pl-3">
-        <img src={logo} width="200" />
-      </Row>
+    <Container fluid="xl">
+      <NavBar />
 
-      <img className="my-5 rounded" src={banner} width="100%" />
+      <img className="mt-4 mb-5 rounded" src={banner} width="100%" />
 
       <Row className="justify-content-center text-secondary mb-4 h2">
         Process Your Audio on Cloud with AudMIX !
@@ -34,9 +32,9 @@ export default function Home() {
         <Card className="text-center bg-dark border-0" style={{ width: '18rem' }}>
           <Card.Body>
             <BsCloudUpload className="text-primary h1" />
-            <Card.Title className="text-success">Upload Audio / Video</Card.Title>
+            <Card.Title className="text-success">Upload / Record Audio</Card.Title>
             <Card.Text className="text-primary">
-              Upload Audio or Video to be Modified in the online <br />
+              Upload or Record Audio to be Modified in the online <br />
               editor
             </Card.Text>
           </Card.Body>
@@ -57,7 +55,9 @@ export default function Home() {
             <BsCloudDownload className="text-primary h1" />
             <Card.Title className="text-success">Get Modified Audio</Card.Title>
             <Card.Text className="text-primary">
-              Download modified audio or video content or share with others
+              Download modified audio <br /> files and share with
+              <br />
+              others
             </Card.Text>
           </Card.Body>
         </Card>

@@ -27,6 +27,10 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('api/admin/', admin.site.urls),
 
+    # Auth API Routes
+    path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.jwt')),
+
     # Audio Processing API Routes
     path('api/', include('processAPI.urls')),
 

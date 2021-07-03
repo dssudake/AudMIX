@@ -34,9 +34,9 @@
 }
 
 /* --------- Custom Modal Styles --------- */
-.modal-backdrop {
-  opacity: 0.8 !important;
-  background-color: #000;
+.modal-open .bg {
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
 }
 
 .modal-content {
@@ -51,4 +51,189 @@
 
 .modal-footer {
   border-top: 1px solid #333333;
+}
+
+/* --------- Custom Progress Bar Styles --------- */
+.progress {
+  height: 4px;
+  border-radius: 10px;
+  background-color: #e6e08633;
+}
+
+.progress-bar {
+  background-color: #95bf9b;
+  border-radius: 10px;
+}
+
+/* --------- NavBar Styles --------- */
+.navbar-nav .nav-link {
+  color: #95bf9b !important;
+  padding-top: 19px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #fff !important;
+  padding-top: 19px;
+}
+
+/* --------- Dropdown Styles --------- */
+
+.accordion .card {
+  overflow: inherit;
+}
+.dropdown-menu {
+  font-size: smaller;
+  color: #95bf9b;
+  background-color: #0e0e0e;
+  border: #95bf9b solid 2px;
+}
+.dropdown-item {
+  color: #95bf9b;
+  background-color: transparent;
+}
+.dropdown-menu a:hover {
+  color: #95bf9b;
+  background-color: #e6e08633;
+}
+.dropdown-menu .active {
+  color: #95bf9b;
+  background-color: #e6e08633;
+}
+.dropdown-menu .active:hover {
+  color: #95bf9b;
+  background-color: #e6e08633;
+}
+.dropdown-menu {
+  font-size: 100%;
+  text-align: center;
+  width: 75%;
+}
+
+/* --------- Slider Styles --------- */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input[type='range'] {
+    overflow: hidden;
+    position: relative;
+    border-radius: 8px;
+    border: 1.5px solid #a39f60;
+    -webkit-appearance: none;
+    background-color: #161616;
+  }
+
+  input[type='range']::-webkit-slider-runnable-track {
+    height: 10px;
+    -webkit-appearance: none;
+    margin-top: auto;
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    margin-top: auto;
+    width: 20px;
+    height: 10px;
+    background: #95bf9b;
+    border: 1px solid #e6e08633;
+    border-radius: 5px;
+    box-shadow: -100px 0 0 90px #799b7ed2;
+  }
+}
+
+/* Regions */
+.wavesurfer-region {
+  border-top: 1px solid #95bf9b !important;
+  border-bottom: 1px solid #95bf9b !important;
+  padding-bottom: 100px;
+  border: 1px solid #95bf9b !important;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+/* Region handles */
+.wavesurfer-handle {
+  width: 10px !important;
+  max-width: 10px !important;
+  border: 1.5px solid #0e0e0ebb;
+  background: #0e0e0e8c !important;
+  border-radius: 4px !important;
+  box-sizing: border-box;
+}
+
+.wavesurfer-handle-end {
+  margin-left: 10px;
+}
+
+.wavesurfer-handle:before,
+.wavesurfer-handle:after {
+  content: '';
+  display: block;
+  position: absolute;
+  z-index: 0;
+
+  border-top: 1px solid #95bf9b;
+  border-bottom: 1px solid #95bf9b;
+  height: 5px;
+  left: 5%;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.wavesurfer-handle:before {
+  margin-top: -2px;
+}
+region.wavesurfer-region::before {
+  content: attr(data-region-label);
+  position: absolute;
+  font-weight: bold;
+  color: #00ff00;
+  padding-left: 20%;
+  top: 0;
+}
+
+/* Labels */
+.labels-container {
+  position: relative;
+}
+
+/* --------- ToolTip Styles --------- */
+/* Primary */
+.primary > .tooltip-inner {
+  background-color: #0e0e0e;
+  color: #95bf9b;
+  border: 1px solid #95bf9b;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+/* Secondary */
+.secondary > .tooltip-inner {
+  background-color: #0e0e0e;
+  color: #a39f60;
+  border: 1px solid #a39f60;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+/* Tool Tip Arrow Style */
+.secondary.tooltip::after {
+  position: absolute;
+  left: 45%;
+  top: 2%;
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-top: 10px solid #a39f60;
+  border-right: 10px solid #0e0e0e00;
+  transform: rotate(45deg);
+}
+.primary.tooltip::after {
+  position: absolute;
+  left: 45%;
+  top: 2%;
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-top: 10px solid #95bf9b;
+  border-right: 10px solid #0e0e0e00;
+  transform: rotate(45deg);
 }

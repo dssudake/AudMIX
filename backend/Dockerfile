@@ -1,11 +1,12 @@
 # pull official base image
-FROM tensorflow/tensorflow:2.5.0
+FROM tensorflow/tensorflow:2.3.0
 
 # install ffmpeg with linux static build
 ARG FFMPEGV=4.2.2
 RUN curl -O https://www.johnvansickle.com/ffmpeg/old-releases/ffmpeg-${FFMPEGV}-amd64-static.tar.xz \
     && tar xJf ffmpeg-${FFMPEGV}-amd64-static.tar.xz \
     && mv ffmpeg-${FFMPEGV}-amd64-static/ffmpeg /usr/local/bin/ \
+    && mv ffmpeg-${FFMPEGV}-amd64-static/ffprobe /usr/local/bin/ \
     && rm -rf ffmpeg-${FFMPEGV}-amd64-static \
     && rm ffmpeg-${FFMPEGV}-amd64-static.tar.xz
 

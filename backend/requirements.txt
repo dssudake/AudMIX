@@ -9,3 +9,7 @@ scikit-learn==0.24.2
 matplotlib==3.3.4
 noisereduce==1.1.0
 celery-progress==0.1.0
+djangorestframework_simplejwt==4.4.0 
+djoser==2.0.5
+PyJWT==1.7.1
+spleeter==2.2.2
